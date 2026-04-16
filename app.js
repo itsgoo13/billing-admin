@@ -1,8 +1,8 @@
-const API = "https://script.googleusercontent.com/macros/echo?user_content_key=AWDtjMVq-QQDNGY-sqT6T7maF6gq5xb6AStvuIftyqwjG8U017tE-ze0WzhzkeWawvIWFIytlOMM41i5ZNLmOzNaGIC4Kgab53zFMHt8mIlUKx_tsIAQgBocLCZQFqHMLRx95os8mYdu4GcPDy9exIQtzH1mDUqbfGfWlMvUKPrS8z8XZyZBZeaUWe_fi3SON35pA5_XTNCYBDqfjhXLpA8FK1N_r3zjRXKjLKR6RSJdeV2f_vxoV13JuTDwiUNoOFV_9VGPanPpsRdACdpvtrcOca0_MBReSA&lib=MFKLzNPqymwmv1-tuPseZtgoUxcDVH0Jx";
+const API = "https://script.google.com/macros/s/AKfycbwUPdb_0y7zZHmva1eUriHijFaBwLlFoU8Ye-OU8kYAHsA7NkdQiCz5vYX6a9YuVv4W/exec";
 
 let globalData = [];
-let lastDataJSON = "";
 
+// ================= LOAD DATA =================
 async function loadData() {
   try {
     const res = await fetch(API);
@@ -15,10 +15,11 @@ async function loadData() {
     updateStats(data);
 
   } catch (err) {
-    console.error("ERROR:", err);
+    console.error("ERROR LOAD:", err);
   }
 }
 
+// ================= RENDER TABLE =================
 function renderTable(data) {
   const tbody = document.getElementById("table-body");
   tbody.innerHTML = "";
@@ -31,7 +32,7 @@ function renderTable(data) {
       <td>${user.ip}</td>
       <td>
         <span class="status ${user.status === 'Aktif' ? 'active':'suspend'}">
-          ${user.status}
+          ${user.status === "Aktif" ? "Aktif" : "Belum"}
         </span>
       </td>
       <td>
@@ -44,6 +45,7 @@ function renderTable(data) {
   });
 }
 
+// ================= STATS =================
 function updateStats(data){
   document.getElementById("total").innerText = data.length;
   document.getElementById("aktif").innerText =
@@ -52,11 +54,12 @@ function updateStats(data){
     data.filter(x=>x.status==="Suspend").length;
 }
 
-function aksi(action, nama){
+// ================= AKSI (FIX FINAL) =================
+function aksi(action,nama){
   const ok = confirm(`Yakin ubah status ${nama}?`);
   if (!ok) return;
 
-  // 🔥 Optimistic update
+  // 🔥 UPDATE UI LANGSUNG
   globalData = globalData.map(x => {
     if (x.nama === nama) {
       return {
@@ -70,40 +73,32 @@ function aksi(action, nama){
   renderTable(globalData);
   updateStats(globalData);
 
-  // 🔄 Kirim ke backend (pakai encode)
+  // 🔄 KIRIM KE GAS
   fetch(API + `?action=${action}&nama=${encodeURIComponent(nama)}`)
-    .then(res => {
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return res.text();
+    .then(() => {
+      // 🔥 DELAY biar GAS selesai update
+      setTimeout(() => {
+        loadData();
+      }, 2000);
     })
-    .then(() => loadData()) // sync ulang dari server
     .catch(err => {
-      alert("Gagal update!");
-      console.error(err);
-      loadData(); // rollback dengan reload data server
+      console.error("Gagal update:", err);
     });
 }
-// 🔥 tombol global
+
+// ================= SYNC =================
 function syncMikrotik(){
   alert("Sync Mikrotik jalan...");
   fetch(API + "?action=sync")
-    .then(res => {
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return res.text();
+    .then(() => {
+      setTimeout(() => {
+        loadData();
+      }, 2000);
     })
-    .then(() => loadData())
-    .catch(err => {
-      alert("Gagal sync!");
-      console.error(err);
-    });
+    .catch(err => console.error(err));
 }
 
-function updateGithub(){
-  alert("Push GitHub jalan...");
-  fetch(API+"?action=push")
-    .then(()=>loadData());
-}
-
+// ================= SEARCH =================
 document.getElementById("search").addEventListener("input", e=>{
   const val = e.target.value.toLowerCase();
   const filtered = globalData.filter(x =>
@@ -112,5 +107,5 @@ document.getElementById("search").addEventListener("input", e=>{
   renderTable(filtered);
 });
 
-setInterval(loadData, 60000);
+// ================= INIT =================
 loadData();
