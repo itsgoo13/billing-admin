@@ -10,9 +10,9 @@ async function loadData() {
   const newJSON = JSON.stringify(data);
 
   // ❌ kalau data sama → jangan render ulang
-  if (newJSON === lastDataJSON) {
-    return;
-  }
+  if (newJSON === lastDataJSON && globalData.length > 0) {
+  return;
+}
 
   // ✔ kalau beda → update UI
   lastDataJSON = newJSON;
@@ -23,7 +23,8 @@ async function loadData() {
   renderTable(data);
   updateStats(data);
 
-  document.getElementById("loading").style.display = "none";
+  const loading = document.getElementById("loading");
+if (loading) loading.style.display = "none";
 }
 
 function renderTable(data) {
