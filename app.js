@@ -3,10 +3,18 @@ const API = "https://script.googleusercontent.com/macros/echo?user_content_key=A
 let globalData = [];
 
 async function loadData() {
-  document.getElementById("loading").style.display = "block";
-
   const res = await fetch(API);
   const data = await res.json();
+
+  const newJSON = JSON.stringify(data);
+
+  // ❌ kalau data sama → jangan render ulang
+  if (newJSON === lastDataJSON) {
+    return;
+  }
+
+  // ✔ kalau beda → update UI
+  lastDataJSON = newJSON;
 
   globalData = data;
   data.sort((a,b)=> a.nama.localeCompare(b.nama));
