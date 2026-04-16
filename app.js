@@ -4,27 +4,19 @@ let globalData = [];
 let lastDataJSON = "";
 
 async function loadData() {
-  const res = await fetch(API);
-  const data = await res.json();
+  try {
+    const res = await fetch(API);
+    const data = await res.json();
 
-  const newJSON = JSON.stringify(data);
+    globalData = data;
+    data.sort((a,b)=> a.nama.localeCompare(b.nama));
 
-  // ❌ kalau data sama → jangan render ulang
-  if (newJSON === lastDataJSON && globalData.length > 0) {
-  return;
-}
+    renderTable(data);
+    updateStats(data);
 
-  // ✔ kalau beda → update UI
-  lastDataJSON = newJSON;
-
-  globalData = data;
-  data.sort((a,b)=> a.nama.localeCompare(b.nama));
-
-  renderTable(data);
-  updateStats(data);
-
-  const loading = document.getElementById("loading");
-if (loading) loading.style.display = "none";
+  } catch (err) {
+    console.error("ERROR:", err);
+  }
 }
 
 function renderTable(data) {
