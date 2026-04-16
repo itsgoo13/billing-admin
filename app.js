@@ -86,8 +86,16 @@ function aksi(action, nama){
 // 🔥 tombol global
 function syncMikrotik(){
   alert("Sync Mikrotik jalan...");
-  fetch(API+"?action=sync")
-    .then(()=>loadData());
+  fetch(API + "?action=sync")
+    .then(res => {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.text();
+    })
+    .then(() => loadData())
+    .catch(err => {
+      alert("Gagal sync!");
+      console.error(err);
+    });
 }
 
 function updateGithub(){
