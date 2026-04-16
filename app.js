@@ -52,11 +52,11 @@ function updateStats(data){
     data.filter(x=>x.status==="Suspend").length;
 }
 
-function aksi(action,nama){
+function aksi(action, nama){
   const ok = confirm(`Yakin ubah status ${nama}?`);
   if (!ok) return;
 
-  // 🔥 UPDATE UI LANGSUNG (OPTIMISTIC UPDATE)
+  // 🔥 Optimistic update
   globalData = globalData.map(x => {
     if (x.nama === nama) {
       return {
@@ -70,15 +70,19 @@ function aksi(action,nama){
   renderTable(globalData);
   updateStats(globalData);
 
-  // 🔄 kirim ke backend
-  fetch(API+`?action=${action}&nama=${encodeURIComponent(nama)}`)
-  .then(res => res.text())
-  .then(() => loadData())
-  .catch(err => {
-    alert("Gagal update!");
-    console.error(err);
-  });
-
+  // 🔄 Kirim ke backend (pakai encode)
+  fetch(API + `?action=${action}&nama=${encodeURIComponent(nama)}`)
+    .then(res => {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.text();
+    })
+    .then(() => loadData()) // sync ulang dari server
+    .catch(err => {
+      alert("Gagal update!");
+      console.error(err);
+      loadData(); // rollback dengan reload data server
+    });
+}
 // 🔥 tombol global
 function syncMikrotik(){
   alert("Sync Mikrotik jalan...");
