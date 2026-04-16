@@ -56,9 +56,28 @@ function aksi(action,nama){
   const ok = confirm(`Yakin ubah status ${nama}?`);
   if (!ok) return;
 
-  fetch(API+`?action=${action}&nama=${nama}`)
-    .then(()=>loadData());
-}
+  // 🔥 UPDATE UI LANGSUNG (OPTIMISTIC UPDATE)
+  globalData = globalData.map(x => {
+    if (x.nama === nama) {
+      return {
+        ...x,
+        status: action === "aktif" ? "Aktif" : "Suspend"
+      };
+    }
+    return x;
+  });
+
+  renderTable(globalData);
+  updateStats(globalData);
+
+  // 🔄 kirim ke backend
+  fetch(API+`?action=${action}&nama=${encodeURIComponent(nama)}`)
+  .then(res => res.text())
+  .then(() => loadData())
+  .catch(err => {
+    alert("Gagal update!");
+    console.error(err);
+  });
 
 // 🔥 tombol global
 function syncMikrotik(){
