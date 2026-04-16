@@ -1,0 +1,93 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #f4f6f9;
+}
+
+.layout {
+  display: flex;
+}
+
+.sidebar {
+  width: 200px;
+  background: #111827;
+  color: white;
+  height: 100vh;
+  padding: 20px;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  flex: 1;
+}
+
+#search {
+  margin-top: 15px;
+  padding: 10px;
+  width: 250px;
+}
+
+#loading {
+  display: none;
+  margin-top: 10px;
+}
+
+.table-box {
+  background: white;
+  margin-top: 20px;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+table {
+  width: 100%;
+}
+
+th, td {
+  padding: 10px;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.active { background: #dcfce7; color: green; }
+.suspend { background: #fee2e2; color: red; }
+
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-on { background: green; color: white; }
+.btn-off { background: red; color: white; }
+
+.actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-main {
+  background: #111827;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}

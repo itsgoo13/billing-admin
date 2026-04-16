@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>R31NET Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <h2>R31NET</h2>
+    <ul>
+      <li>Dashboard</li>
+      <li>Pelanggan</li>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <h1>Billing Dashboard</h1>
+
+    <div class="stats">
+      <div class="card">Aktif: <span id="aktif">0</span></div>
+      <div class="card">Suspend: <span id="suspend">0</span></div>
+      <div class="card">Total: <span id="total">0</span></div>
+    </div>
+  <div class="actions">
+  <button class="btn-main" onclick="syncMikrotik()">🔄 Sync Mikrotik</button>
+  <button class="btn-main" onclick="updateGithub()">🚀 Update GitHub</button>
+</div>
+
+    <input id="search" placeholder="Cari pelanggan...">
+
+    <div id="loading">Loading...</div>
+
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>IP</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </main>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
