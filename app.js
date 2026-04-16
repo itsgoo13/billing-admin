@@ -1,6 +1,7 @@
 const API = "https://script.googleusercontent.com/macros/echo?user_content_key=AWDtjMVq-QQDNGY-sqT6T7maF6gq5xb6AStvuIftyqwjG8U017tE-ze0WzhzkeWawvIWFIytlOMM41i5ZNLmOzNaGIC4Kgab53zFMHt8mIlUKx_tsIAQgBocLCZQFqHMLRx95os8mYdu4GcPDy9exIQtzH1mDUqbfGfWlMvUKPrS8z8XZyZBZeaUWe_fi3SON35pA5_XTNCYBDqfjhXLpA8FK1N_r3zjRXKjLKR6RSJdeV2f_vxoV13JuTDwiUNoOFV_9VGPanPpsRdACdpvtrcOca0_MBReSA&lib=MFKLzNPqymwmv1-tuPseZtgoUxcDVH0Jx";
 
 let globalData = [];
+let lastDataJSON = "";
 
 async function loadData() {
   const res = await fetch(API);
