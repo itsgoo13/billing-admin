@@ -12,7 +12,15 @@
         .back-btn { color: white; background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 12px; text-decoration: none; display: inline-block; margin-bottom: 30px; }
         h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #fff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
         .subtitle { color: #aaa; margin-bottom: 30px; }
-        
+
+        .expense-form { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 30px; margin-bottom: 40px; border: 1px solid rgba(255,255,255,0.05); }
+        .form-row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
+        .form-group { flex: 1; min-width: 150px; }
+        .form-group label { display: block; color: #aaa; margin-bottom: 8px; font-size: 0.9rem; }
+        .form-group input, .form-group select { width: 100%; padding: 14px; background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-size: 1rem; }
+        .btn-primary { padding: 14px 28px; background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,212,255,0.3); }
+
         .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 40px; }
         .card { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 30px; }
         .card.pemasukan .value { color: #2ed573; }
@@ -20,7 +28,7 @@
         .card.profit .value { color: #00d4ff; }
         .card-label { color: #aaa; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         .card-value { font-size: 3rem; font-weight: 700; }
-        
+
         .table-container { background: rgba(255,255,255,0.02); border-radius: 24px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 30px; overflow-x: auto; }
         h2 { margin: 30px 0 20px; color: #00d4ff; }
         table { width: 100%; border-collapse: collapse; }
@@ -28,10 +36,12 @@
         td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .text-right { text-align: right; }
         .total-row { background: rgba(0,212,255,0.05); font-weight: bold; }
-        .loading { text-align: center; padding: 40px; color: #aaa; }
-        
         .profit-positive { color: #2ed573; }
         .profit-negative { color: #ff6b6b; }
+        .loading { text-align: center; padding: 40px; color: #aaa; }
+        .toast { position: fixed; bottom: 30px; right: 30px; padding: 18px 30px; background: #1a1a2e; border-left: 5px solid #00d4ff; border-radius: 16px; display: none; z-index: 2000; }
+        .toast.success { border-left-color: #2ed573; }
+        .toast.error { border-left-color: #ff6b6b; }
     </style>
 </head>
 <body>
@@ -40,6 +50,41 @@
     <h1>💰 Keuangan R31NET</h1>
     <p class="subtitle">Rekap Bulanan Tahun 2026</p>
 
+    <!-- FORM INPUT PENGELUARAN -->
+    <div class="expense-form">
+        <h3 style="margin-bottom:20px;">➕ Catat Pengeluaran Baru</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Tanggal</label>
+                <input type="date" id="expenseDate">
+            </div>
+            <div class="form-group">
+                <label>Kategori</label>
+                <select id="expenseCategory">
+                    <option value="Bayar ISP Upstream">Bayar ISP</option>
+                    <option value="Bayar Teknisi">Teknisi</option>
+                    <option value="Beli Alat">Beli Alat</option>
+                    <option value="Perbaikan">Perbaikan</option>
+                    <option value="Mama">Mama</option>
+                    <option value="Sedekah">Sedekah</option>
+                    <option value="Lain-lain">Lain-lain</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Deskripsi</label>
+                <input type="text" id="expenseDesc" placeholder="Keterangan">
+            </div>
+            <div class="form-group">
+                <label>Jumlah (Rp)</label>
+                <input type="number" id="expenseAmount" placeholder="0">
+            </div>
+            <div class="form-group">
+                <button class="btn-primary" onclick="addExpense()">💾 Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUMMARY CARDS -->
     <div class="summary-cards">
         <div class="card pemasukan">
             <div class="card-label">📥 Total Pemasukan</div>
@@ -55,6 +100,7 @@
         </div>
     </div>
 
+    <!-- TABEL REKAP BULANAN -->
     <h2>📆 Rekap Bulanan</h2>
     <div class="table-container">
         <table>
@@ -73,6 +119,7 @@
         </table>
     </div>
 
+    <!-- TABEL DETAIL PENGELUARAN -->
     <h2>🧾 Detail Pengeluaran (Akumulasi)</h2>
     <div class="table-container">
         <table>
@@ -89,79 +136,92 @@
     </div>
 </div>
 
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUPdb_0y7zZHmva1eUriHijFaBwLlFoU8Ye-OU8kYAHsA7NkdQiCz5vYX6a9YuVv4W/exec';
+
+    document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
 
     async function loadKeuangan() {
         try {
             const resp = await fetch(SCRIPT_URL + '?action=keuangan');
             const data = await resp.json();
 
-            // Total keseluruhan
             document.getElementById('totalPemasukan').textContent = 'Rp ' + formatNumber(data.totalPemasukan);
             document.getElementById('totalPengeluaran').textContent = 'Rp ' + formatNumber(data.totalPengeluaran);
-            const totalProfit = data.totalPemasukan - data.totalPengeluaran;
-            document.getElementById('totalProfit').textContent = (totalProfit >= 0 ? 'Rp ' : '-Rp ') + formatNumber(Math.abs(totalProfit));
+            const profit = data.totalPemasukan - data.totalPengeluaran;
+            document.getElementById('totalProfit').textContent = (profit >= 0 ? 'Rp ' : '-Rp ') + formatNumber(Math.abs(profit));
 
-            // Tabel rekap bulanan
             const tbody = document.getElementById('bulananBody');
             let rows = '';
-            let totalPemasukanBulanan = 0;
-            let totalPengeluaranBulanan = 0;
-
             for (let i = 0; i < data.bulanLabels.length; i++) {
                 const bulan = data.bulanLabels[i];
                 const pemasukan = data.pemasukanBulanan[i] || 0;
                 const pengeluaran = data.pengeluaranBulanan[i] || 0;
-                const profit = pemasukan - pengeluaran;
-                const margin = pemasukan > 0 ? ((profit / pemasukan) * 100).toFixed(1) : '0.0';
-
-                totalPemasukanBulanan += pemasukan;
-                totalPengeluaranBulanan += pengeluaran;
-
+                const profitBulan = pemasukan - pengeluaran;
+                const margin = pemasukan > 0 ? ((profitBulan / pemasukan) * 100).toFixed(1) : '0.0';
                 rows += `<tr>
                     <td>${bulan}</td>
                     <td class="text-right">Rp ${formatNumber(pemasukan)}</td>
                     <td class="text-right">Rp ${formatNumber(pengeluaran)}</td>
-                    <td class="text-right ${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${profit >= 0 ? 'Rp ' : '-Rp '}${formatNumber(Math.abs(profit))}</td>
+                    <td class="text-right ${profitBulan >= 0 ? 'profit-positive' : 'profit-negative'}">${profitBulan >= 0 ? 'Rp ' : '-Rp '}${formatNumber(Math.abs(profitBulan))}</td>
                     <td class="text-right">${margin}%</td>
                 </tr>`;
             }
-
-            // Baris TOTAL
-            const totalProfitBulanan = totalPemasukanBulanan - totalPengeluaranBulanan;
-            const totalMargin = totalPemasukanBulanan > 0 ? ((totalProfitBulanan / totalPemasukanBulanan) * 100).toFixed(1) : '0.0';
             rows += `<tr class="total-row">
                 <td><strong>TOTAL</strong></td>
-                <td class="text-right"><strong>Rp ${formatNumber(totalPemasukanBulanan)}</strong></td>
-                <td class="text-right"><strong>Rp ${formatNumber(totalPengeluaranBulanan)}</strong></td>
-                <td class="text-right ${totalProfitBulanan >= 0 ? 'profit-positive' : 'profit-negative'}"><strong>${totalProfitBulanan >= 0 ? 'Rp ' : '-Rp '}${formatNumber(Math.abs(totalProfitBulanan))}</strong></td>
-                <td class="text-right"><strong>${totalMargin}%</strong></td>
+                <td class="text-right"><strong>Rp ${formatNumber(data.totalPemasukan)}</strong></td>
+                <td class="text-right"><strong>Rp ${formatNumber(data.totalPengeluaran)}</strong></td>
+                <td class="text-right ${profit >= 0 ? 'profit-positive' : 'profit-negative'}"><strong>${profit >= 0 ? 'Rp ' : '-Rp '}${formatNumber(Math.abs(profit))}</strong></td>
+                <td class="text-right"><strong>${data.totalPemasukan > 0 ? ((profit / data.totalPemasukan) * 100).toFixed(1) : '0.0'}%</strong></td>
             </tr>`;
-
             tbody.innerHTML = rows;
 
-            // Detail pengeluaran
             const detailBody = document.getElementById('expenseDetailBody');
-            if (data.pengeluaranDetail && data.pengeluaranDetail.length > 0) {
+            if (data.pengeluaranDetail && data.pengeluaranDetail.length) {
                 detailBody.innerHTML = data.pengeluaranDetail.map(item => `
-                    <tr>
-                        <td>${item.kategori}</td>
-                        <td class="text-right" style="color:#ff6b6b;">Rp ${formatNumber(item.total)}</td>
-                    </tr>
+                    <tr><td>${item.kategori}</td><td class="text-right" style="color:#ff6b6b;">Rp ${formatNumber(item.total)}</td></tr>
                 `).join('');
             } else {
                 detailBody.innerHTML = '<tr><td colspan="2" class="loading">Belum ada data pengeluaran</td></tr>';
             }
-
-        } catch(e) {
-            console.error(e);
-            document.getElementById('bulananBody').innerHTML = '<tr><td colspan="5" class="loading">❌ Gagal memuat data</td></tr>';
-        }
+        } catch(e) { console.error(e); }
     }
 
-    function formatNumber(n) {
-        return n.toLocaleString('id');
+    async function addExpense() {
+        const tanggal = document.getElementById('expenseDate').value;
+        const kategori = document.getElementById('expenseCategory').value;
+        const deskripsi = document.getElementById('expenseDesc').value;
+        const jumlah = document.getElementById('expenseAmount').value;
+
+        if (!tanggal || !kategori || !jumlah) {
+            showToast('Tanggal, kategori, dan jumlah wajib diisi', 'error');
+            return;
+        }
+
+        showToast('Menyimpan...', 'success');
+        try {
+            const resp = await fetch(`${SCRIPT_URL}?action=add_expense&tanggal=${tanggal}&kategori=${encodeURIComponent(kategori)}&deskripsi=${encodeURIComponent(deskripsi)}&jumlah=${jumlah}`);
+            const res = await resp.json();
+            if (res.success) {
+                showToast('Pengeluaran berhasil dicatat', 'success');
+                document.getElementById('expenseDesc').value = '';
+                document.getElementById('expenseAmount').value = '';
+                loadKeuangan();
+            } else {
+                showToast('Gagal: ' + res.message, 'error');
+            }
+        } catch(e) { showToast('Error koneksi', 'error'); }
+    }
+
+    function formatNumber(n) { return n.toLocaleString('id'); }
+    function showToast(msg, type) {
+        const t = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        t.className = 'toast ' + type;
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3000);
     }
 
     loadKeuangan();
