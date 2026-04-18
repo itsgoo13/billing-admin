@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R31NET Billing - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h2>🌐 R31NET BILLING</h2>
+                <p>Silakan login untuk mengakses dashboard</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label>👤 Username</label>
+                    <input type="text" id="username" placeholder="Masukkan username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>🔑 Password</label>
+                    <input type="password" id="password" placeholder="Masukkan password" required>
+                </div>
+                
+                <div class="form-group remember">
+                    <input type="checkbox" id="remember">
+                    <label>Ingat saya</label>
+                </div>
+                
+                <button type="submit" class="btn-login-submit">🚪 Masuk Dashboard</button>
+                
+                <div id="errorMessage" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const VALID_USERNAME = "admin";
+        const VALID_PASSWORD = "r31net2024";
+        
+        const loginForm = document.getElementById('loginForm');
+        
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                if (remember) {
+                    localStorage.setItem('r31net_logged_in', 'true');
+                    localStorage.setItem('r31net_username', username);
+                } else {
+                    sessionStorage.setItem('r31net_logged_in', 'true');
+                    sessionStorage.setItem('r31net_username', username);
+                }
+                window.location.href = 'dashboard.html';
+            } else {
+                errorMsg.textContent = '❌ Username atau password salah!';
+            }
+        });
+        
+        const isLoggedIn = localStorage.getItem('r31net_logged_in') === 'true' || 
+                          sessionStorage.getItem('r31net_logged_in') === 'true';
+        if (isLoggedIn) {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>
