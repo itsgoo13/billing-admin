@@ -7,52 +7,109 @@
     <link rel="icon" type="image/png" href="logo-r31net.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Inter', sans-serif; }
-        body { background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 100%); min-height: 100vh; color: white; padding: 30px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .back-btn { color: white; background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 12px; text-decoration: none; display: inline-block; margin-bottom: 30px; }
-        h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #fff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        .subtitle { color: #aaa; margin-bottom: 30px; }
+        body { background: #f5f7fb; min-height: 100vh; color: #1e293b; padding: 30px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        
+        /* Header */
+        .header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
+        .back-btn { color: #475569; background: white; padding: 10px 20px; border-radius: 40px; text-decoration: none; font-weight: 500; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.2s; }
+        .back-btn:hover { background: #00d4ff; color: white; box-shadow: 0 4px 12px rgba(0,212,255,0.3); }
+        h1 { font-size: 2rem; font-weight: 600; color: #0f172a; }
+        .subtitle { color: #64748b; margin-left: auto; font-weight: 400; }
 
-        .expense-form { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 30px; margin-bottom: 40px; border: 1px solid rgba(255,255,255,0.05); }
-        .form-row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
-        .form-group { flex: 1; min-width: 150px; }
-        .form-group label { display: block; color: #aaa; margin-bottom: 8px; font-size: 0.9rem; }
-        .form-group input, .form-group select { width: 100%; padding: 14px; background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-size: 1rem; }
-        .btn-primary { padding: 14px 28px; background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,212,255,0.3); }
+        /* Form Input - Minimalis */
+        .expense-form {
+            background: white;
+            border-radius: 20px;
+            padding: 24px 28px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f6;
+        }
+        .expense-form h3 { font-size: 1.1rem; font-weight: 600; color: #334155; margin-bottom: 20px; }
+        .form-row { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; }
+        .form-group { flex: 1; min-width: 140px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 500; color: #64748b; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            background: white;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            color: #1e293b;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: #00d4ff; }
+        .btn-primary {
+            padding: 12px 28px;
+            background: #00d4ff;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0,212,255,0.2);
+            white-space: nowrap;
+        }
+        .btn-primary:hover { background: #0099cc; transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,212,255,0.3); }
 
-        .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 40px; }
-        .card { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 30px; }
-        .card.pemasukan .value { color: #2ed573; }
-        .card.pengeluaran .value { color: #ff6b6b; }
-        .card.profit .value { color: #00d4ff; }
-        .card-label { color: #aaa; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .card-value { font-size: 3rem; font-weight: 700; }
+        /* Summary Cards - Minimalis */
+        .summary-cards { display: flex; gap: 20px; margin-bottom: 40px; flex-wrap: wrap; }
+        .card { background: white; border-radius: 20px; padding: 24px 28px; flex: 1; min-width: 160px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #eef2f6; }
+        .card-label { font-size: 0.85rem; font-weight: 500; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+        .card-value { font-size: 2.8rem; font-weight: 700; line-height: 1.2; }
+        .card.pemasukan .card-value { color: #10b981; }
+        .card.pengeluaran .card-value { color: #ef4444; }
+        .card.profit .card-value { color: #00d4ff; }
 
-        .table-container { background: rgba(255,255,255,0.02); border-radius: 24px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 30px; overflow-x: auto; }
-        h2 { margin: 30px 0 20px; color: #00d4ff; }
+        /* Section Title */
+        .section-title { font-size: 1.3rem; font-weight: 600; color: #0f172a; margin-bottom: 20px; }
+
+        /* Table - Minimalis */
+        .table-wrapper { background: white; border-radius: 20px; padding: 8px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #eef2f6; overflow-x: auto; margin-bottom: 35px; }
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 15px; color: #00d4ff; border-bottom: 1px solid rgba(0,212,255,0.2); }
-        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { text-align: left; padding: 18px 24px; font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #eef2f6; }
+        td { padding: 16px 24px; font-size: 0.95rem; color: #334155; border-bottom: 1px solid #f8fafc; }
+        tr:last-child td { border-bottom: none; }
         .text-right { text-align: right; }
-        .total-row { background: rgba(0,212,255,0.05); font-weight: bold; }
-        .profit-positive { color: #2ed573; }
-        .profit-negative { color: #ff6b6b; }
-        .loading { text-align: center; padding: 40px; color: #aaa; }
-        .toast { position: fixed; bottom: 30px; right: 30px; padding: 18px 30px; background: #1a1a2e; border-left: 5px solid #00d4ff; border-radius: 16px; display: none; z-index: 2000; }
-        .toast.success { border-left-color: #2ed573; }
-        .toast.error { border-left-color: #ff6b6b; }
+        .total-row { background: #f8fafc; font-weight: 600; }
+        .total-row td { color: #0f172a; }
+        .profit-positive { color: #10b981; font-weight: 500; }
+        .profit-negative { color: #ef4444; font-weight: 500; }
+
+        /* Detail Pengeluaran - Compact */
+        .detail-wrapper { background: white; border-radius: 20px; padding: 8px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #eef2f6; }
+        .detail-wrapper table th { border-bottom: 1px solid #eef2f6; }
+        .loading { text-align: center; padding: 40px; color: #94a3b8; }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 30px; right: 30px; background: white; padding: 16px 24px; border-radius: 60px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; align-items: center; gap: 10px; z-index: 2000; font-weight: 500; }
+        .toast.success { border-left: 4px solid #10b981; color: #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; color: #ef4444; }
+
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .subtitle { margin-left: 0; width: 100%; }
+            .form-group { min-width: 100%; }
+            .btn-primary { width: 100%; }
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <a href="dashboard.html" class="back-btn">← Kembali ke Dashboard</a>
-    <h1>💰 Keuangan R31NET</h1>
-    <p class="subtitle">Rekap Bulanan Tahun 2026</p>
+    <div class="header">
+        <a href="dashboard.html" class="back-btn">← Dashboard</a>
+        <h1>Keuangan</h1>
+        <span class="subtitle">R31NET · 2026</span>
+    </div>
 
-    <!-- FORM INPUT PENGELUARAN -->
+    <!-- FORM INPUT PENGELUARAN - MINIMALIS -->
     <div class="expense-form">
-        <h3 style="margin-bottom:20px;">➕ Catat Pengeluaran Baru</h3>
+        <h3>➕ Catat Pengeluaran</h3>
         <div class="form-row">
             <div class="form-group">
                 <label>Tanggal</label>
@@ -61,25 +118,25 @@
             <div class="form-group">
                 <label>Kategori</label>
                 <select id="expenseCategory">
-                    <option value="Bayar ISP Upstream">Bayar ISP</option>
+                    <option value="Bayar ISP Upstream">ISP</option>
                     <option value="Bayar Teknisi">Teknisi</option>
-                    <option value="Beli Alat">Beli Alat</option>
+                    <option value="Beli Alat">Alat</option>
                     <option value="Perbaikan">Perbaikan</option>
                     <option value="Mama">Mama</option>
                     <option value="Sedekah">Sedekah</option>
-                    <option value="Lain-lain">Lain-lain</option>
+                    <option value="Lain-lain">Lainnya</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Deskripsi</label>
-                <input type="text" id="expenseDesc" placeholder="Keterangan">
+                <input type="text" id="expenseDesc" placeholder="Opsional">
             </div>
             <div class="form-group">
                 <label>Jumlah (Rp)</label>
                 <input type="number" id="expenseAmount" placeholder="0">
             </div>
             <div class="form-group">
-                <button class="btn-primary" onclick="addExpense()">💾 Simpan</button>
+                <button class="btn-primary" onclick="addExpense()">Simpan</button>
             </div>
         </div>
     </div>
@@ -87,29 +144,29 @@
     <!-- SUMMARY CARDS -->
     <div class="summary-cards">
         <div class="card pemasukan">
-            <div class="card-label">📥 Total Pemasukan</div>
-            <div class="card-value" id="totalPemasukan">Rp0</div>
+            <div class="card-label">Pemasukan</div>
+            <div class="card-value" id="totalPemasukan">0</div>
         </div>
         <div class="card pengeluaran">
-            <div class="card-label">📤 Total Pengeluaran</div>
-            <div class="card-value" id="totalPengeluaran">Rp0</div>
+            <div class="card-label">Pengeluaran</div>
+            <div class="card-value" id="totalPengeluaran">0</div>
         </div>
         <div class="card profit">
-            <div class="card-label">📊 Total Profit</div>
-            <div class="card-value" id="totalProfit">Rp0</div>
+            <div class="card-label">Profit</div>
+            <div class="card-value" id="totalProfit">0</div>
         </div>
     </div>
 
-    <!-- TABEL REKAP BULANAN -->
-    <h2>📆 Rekap Bulanan</h2>
-    <div class="table-container">
+    <!-- REKAP BULANAN -->
+    <div class="section-title">📆 Rekap Bulanan</div>
+    <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
                     <th>Bulan</th>
                     <th class="text-right">Pemasukan</th>
                     <th class="text-right">Pengeluaran</th>
-                    <th class="text-right">Profit/Loss</th>
+                    <th class="text-right">Profit</th>
                     <th class="text-right">Margin</th>
                 </tr>
             </thead>
@@ -119,14 +176,14 @@
         </table>
     </div>
 
-    <!-- TABEL DETAIL PENGELUARAN -->
-    <h2>🧾 Detail Pengeluaran (Akumulasi)</h2>
-    <div class="table-container">
+    <!-- DETAIL PENGELUARAN -->
+    <div class="section-title">🧾 Rincian Pengeluaran</div>
+    <div class="detail-wrapper">
         <table>
             <thead>
                 <tr>
                     <th>Kategori</th>
-                    <th class="text-right">Total (Rp)</th>
+                    <th class="text-right">Total</th>
                 </tr>
             </thead>
             <tbody id="expenseDetailBody">
@@ -140,7 +197,6 @@
 
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUPdb_0y7zZHmva1eUriHijFaBwLlFoU8Ye-OU8kYAHsA7NkdQiCz5vYX6a9YuVv4W/exec';
-
     document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
 
     async function loadKeuangan() {
@@ -151,7 +207,7 @@
             document.getElementById('totalPemasukan').textContent = 'Rp ' + formatNumber(data.totalPemasukan);
             document.getElementById('totalPengeluaran').textContent = 'Rp ' + formatNumber(data.totalPengeluaran);
             const profit = data.totalPemasukan - data.totalPengeluaran;
-            document.getElementById('totalProfit').textContent = (profit >= 0 ? 'Rp ' : '-Rp ') + formatNumber(Math.abs(profit));
+            document.getElementById('totalProfit').textContent = (profit >= 0 ? '' : '-') + 'Rp ' + formatNumber(Math.abs(profit));
 
             const tbody = document.getElementById('bulananBody');
             let rows = '';
@@ -163,28 +219,28 @@
                 const margin = pemasukan > 0 ? ((profitBulan / pemasukan) * 100).toFixed(1) : '0.0';
                 rows += `<tr>
                     <td>${bulan}</td>
-                    <td class="text-right">Rp ${formatNumber(pemasukan)}</td>
-                    <td class="text-right">Rp ${formatNumber(pengeluaran)}</td>
-                    <td class="text-right ${profitBulan >= 0 ? 'profit-positive' : 'profit-negative'}">${profitBulan >= 0 ? 'Rp ' : '-Rp '}${formatNumber(Math.abs(profitBulan))}</td>
+                    <td class="text-right">${formatNumber(pemasukan)}</td>
+                    <td class="text-right">${formatNumber(pengeluaran)}</td>
+                    <td class="text-right ${profitBulan >= 0 ? 'profit-positive' : 'profit-negative'}">${profitBulan >= 0 ? '' : '-'}${formatNumber(Math.abs(profitBulan))}</td>
                     <td class="text-right">${margin}%</td>
                 </tr>`;
             }
             rows += `<tr class="total-row">
-                <td><strong>TOTAL</strong></td>
-                <td class="text-right"><strong>Rp ${formatNumber(data.totalPemasukan)}</strong></td>
-                <td class="text-right"><strong>Rp ${formatNumber(data.totalPengeluaran)}</strong></td>
-                <td class="text-right ${profit >= 0 ? 'profit-positive' : 'profit-negative'}"><strong>${profit >= 0 ? 'Rp ' : '-Rp '}${formatNumber(Math.abs(profit))}</strong></td>
-                <td class="text-right"><strong>${data.totalPemasukan > 0 ? ((profit / data.totalPemasukan) * 100).toFixed(1) : '0.0'}%</strong></td>
+                <td>TOTAL</td>
+                <td class="text-right">${formatNumber(data.totalPemasukan)}</td>
+                <td class="text-right">${formatNumber(data.totalPengeluaran)}</td>
+                <td class="text-right ${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${profit >= 0 ? '' : '-'}${formatNumber(Math.abs(profit))}</td>
+                <td class="text-right">${data.totalPemasukan > 0 ? ((profit / data.totalPemasukan) * 100).toFixed(1) : '0.0'}%</td>
             </tr>`;
             tbody.innerHTML = rows;
 
             const detailBody = document.getElementById('expenseDetailBody');
             if (data.pengeluaranDetail && data.pengeluaranDetail.length) {
                 detailBody.innerHTML = data.pengeluaranDetail.map(item => `
-                    <tr><td>${item.kategori}</td><td class="text-right" style="color:#ff6b6b;">Rp ${formatNumber(item.total)}</td></tr>
+                    <tr><td>${item.kategori}</td><td class="text-right" style="color:#ef4444;">${formatNumber(item.total)}</td></tr>
                 `).join('');
             } else {
-                detailBody.innerHTML = '<tr><td colspan="2" class="loading">Belum ada data pengeluaran</td></tr>';
+                detailBody.innerHTML = '<tr><td colspan="2" class="loading">Belum ada data</td></tr>';
             }
         } catch(e) { console.error(e); }
     }
@@ -195,11 +251,7 @@
         const deskripsi = document.getElementById('expenseDesc').value;
         const jumlah = document.getElementById('expenseAmount').value;
 
-        if (!tanggal || !kategori || !jumlah) {
-            showToast('Tanggal, kategori, dan jumlah wajib diisi', 'error');
-            return;
-        }
-
+        if (!tanggal || !kategori || !jumlah) return showToast('Tanggal, kategori, dan jumlah wajib diisi', 'error');
         showToast('Menyimpan...', 'success');
         try {
             const resp = await fetch(`${SCRIPT_URL}?action=add_expense&tanggal=${tanggal}&kategori=${encodeURIComponent(kategori)}&deskripsi=${encodeURIComponent(deskripsi)}&jumlah=${jumlah}`);
@@ -209,9 +261,7 @@
                 document.getElementById('expenseDesc').value = '';
                 document.getElementById('expenseAmount').value = '';
                 loadKeuangan();
-            } else {
-                showToast('Gagal: ' + res.message, 'error');
-            }
+            } else { showToast('Gagal: ' + res.message, 'error'); }
         } catch(e) { showToast('Error koneksi', 'error'); }
     }
 
@@ -220,7 +270,7 @@
         const t = document.getElementById('toast');
         document.getElementById('toastMsg').textContent = msg;
         t.className = 'toast ' + type;
-        t.style.display = 'block';
+        t.style.display = 'flex';
         setTimeout(() => t.style.display = 'none', 3000);
     }
 
