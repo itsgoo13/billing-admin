@@ -3,6 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>R31NET Admin</title>
+    <script>
+        // Proteksi login - hanya bisa akses jika sudah login
+        const isLoggedIn = localStorage.getItem('r31net_logged_in') === 'true' || 
+                          sessionStorage.getItem('r31net_logged_in') === 'true';
+        
+        if (!isLoggedIn) {
+            // Redirect ke halaman login kalau belum login
+            window.location.href = 'index.html';
+        }
+        
+        // Fungsi logout
+        function logout() {
+            localStorage.removeItem('r31net_logged_in');
+            localStorage.removeItem('r31net_username');
+            sessionStorage.removeItem('r31net_logged_in');
+            sessionStorage.removeItem('r31net_username');
+            window.location.href = 'index.html';
+        }
+        
+        // Tampilkan username saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            const username = localStorage.getItem('r31net_username') || 
+                             sessionStorage.getItem('r31net_username') || 'Admin';
+            const userDisplay = document.getElementById('usernameDisplay');
+            if (userDisplay) userDisplay.textContent = username;
+        });
+    </script>
+    <!-- ===== SELESAI TAMBAHAN ===== -->
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,6 +44,16 @@
 
   <aside class="sidebar">
     <h2>R31NET</h2>
+    <div style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px;">
+        <div style="color: #aaa; font-size: 0.8rem;">Logged in as</div>
+        <div style="color: #00d4ff; font-weight: bold;">
+            👤 <span id="usernameDisplay">Admin</span>
+        </div>
+        <button onclick="logout()" style="margin-top: 10px; width: 100%; padding: 8px; background: #ff4757; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            🚪 Logout
+        </button>
+    </div>
+        
     <ul>
       <li>Dashboard</li>
       <li>Pelanggan</li>
