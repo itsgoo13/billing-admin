@@ -63,16 +63,85 @@
         .btn-invoice:hover { background: rgba(155, 89, 182, 0.25); }
         .btn-hapus { background: rgba(255, 71, 87, 0.15); color: #ff6b6b; border: 1px solid rgba(255, 71, 87, 0.3); }
         .btn-hapus:hover { background: rgba(255, 71, 87, 0.25); }
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 30px; padding: 40px; width: 90%; max-width: 500px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5); }
-        .modal h2 { color: #00d4ff; margin-bottom: 30px; font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
-        .modal .form-group { margin-bottom: 25px; }
-        .modal label { display: block; color: rgba(255, 255, 255, 0.7); margin-bottom: 10px; font-weight: 500; }
-        .modal input, .modal select { width: 100%; padding: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; font-size: 1rem; outline: none; transition: all 0.3s; }
-        .modal input:focus, .modal select:focus { border-color: #00d4ff; background: rgba(0, 212, 255, 0.05); }
-        .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
-        .modal-actions button { flex: 1; padding: 16px; border-radius: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .error-text { color: #ff6b6b; font-size: 0.85rem; margin-top: 8px; min-height: 20px; }
+        .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 30px;
+    padding: 40px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal h2 {
+    color: #00d4ff;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal .form-group {
+    margin-bottom: 25px;
+}
+
+.modal label {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.modal input, .modal select {
+    width: 100%;
+    padding: 16px;
+    background: #1a1a2e !important;           /* ⬅️ latar gelap */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    color: white !important;                   /* ⬅️ teks putih */
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.modal input:focus, .modal select:focus {
+    border-color: #00d4ff;
+    background: rgba(0, 212, 255, 0.05);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 16px;
+    border-radius: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.error-text {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    min-height: 20px;
+}
         .toast { position: fixed; bottom: 30px; right: 30px; padding: 18px 30px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 20px; color: white; font-weight: 500; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); display: none; align-items: center; gap: 15px; z-index: 2000; animation: slideIn 0.3s ease; }
         .toast.success { border-color: #2ed573; }
         .toast.error { border-color: #ff6b6b; }
