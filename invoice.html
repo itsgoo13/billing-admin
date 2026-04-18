@@ -134,44 +134,51 @@
     }
 
     async function generateAndDownload() {
-        const nama = document.getElementById('nama').value.trim();
-        const ip = document.getElementById('ip').value.trim();
-        const paket = document.getElementById('paket').value.trim();
-        const harga = document.getElementById('harga').value;
-        const diskon = document.getElementById('diskon').value || 0;
-        const instalasi = document.getElementById('instalasi').value || 0;
-        const sewaAlat = document.getElementById('sewaAlat').value || 0;
-        const tanggal = document.getElementById('tanggalInvoice').value;
-        const telepon = document.getElementById('telepon').value.trim();
-        const keterangan = document.getElementById('keterangan').value.trim();
+    const nama = document.getElementById('nama').value.trim();
+    const ip = document.getElementById('ip').value.trim();
+    const paket = document.getElementById('paket').value.trim();
+    const harga = document.getElementById('harga').value;
+    const diskon = document.getElementById('diskon').value || 0;
+    const instalasi = document.getElementById('instalasi').value || 0;
+    const sewaAlat = document.getElementById('sewaAlat').value || 0;
+    const tanggal = document.getElementById('tanggalInvoice').value;
+    const telepon = document.getElementById('telepon').value.trim();
+    const keterangan = document.getElementById('keterangan').value.trim();
 
-        if (!nama || !ip || !paket || !harga) {
-            showToast('Nama, IP, Paket, dan Harga wajib diisi', 'error');
-            return;
-        }
-
-        showToast('⏳ Membuat invoice...', 'success');
-
-        try {
-            const params = new URLSearchParams({
-                action: 'invoice',
-                nama, ip, paket, harga, diskon,
-                instalasi, sewaAlat, tanggal, telepon, keterangan
-            });
-
-            const resp = await fetch(`${SCRIPT_URL}?${params.toString()}`);
-            const res = await resp.json();
-
-            if (res.success) {
-                showToast('✅ Invoice siap!', 'success');
-                window.open(res.url, '_blank');
-            } else {
-                showToast('❌ Gagal: ' + (res.message || 'Unknown error'), 'error');
-            }
-        } catch (e) {
-            showToast('❌ Error koneksi', 'error');
-        }
+    if (!nama || !ip || !paket || !harga) {
+        showToast('Nama, IP, Paket, dan Harga wajib diisi', 'error');
+        return;
     }
+
+    showToast('⏳ Membuat invoice...', 'success');
+
+    // Bangun URL manual (lebih aman dari encoding error)
+    let url = `${SCRIPT_URL}?action=invoice`;
+    url += `&nama=${encodeURIComponent(nama)}`;
+    url += `&ip=${encodeURIComponent(ip)}`;
+    url += `&paket=${encodeURIComponent(paket)}`;
+    url += `&harga=${encodeURIComponent(harga)}`;
+    url += `&diskon=${encodeURIComponent(diskon)}`;
+    url += `&instalasi=${encodeURIComponent(instalasi)}`;
+    url += `&sewaAlat=${encodeURIComponent(sewaAlat)}`;
+    url += `&tanggal=${encodeURIComponent(tanggal)}`;
+    url += `&telepon=${encodeURIComponent(telepon)}`;
+    url += `&keterangan=${encodeURIComponent(keterangan)}`;
+
+    try {
+        const resp = await fetch(url);
+        const res = await resp.json();
+
+        if (res.success) {
+            showToast('✅ Invoice siap!', 'success');
+            window.open(res.url, '_blank');
+        } else {
+            showToast('❌ Gagal: ' + (res.message || 'Unknown error'), 'error');
+        }
+    } catch (e) {
+        showToast('❌ Error koneksi', 'error');
+    }
+}
 
     function showToast(msg, type) {
         const toast = document.getElementById('toast');
