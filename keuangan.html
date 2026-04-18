@@ -123,36 +123,66 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUPdb_0y7zZHmva1eUriHijFaBwLlFoU8Ye-OU8kYAHsA7NkdQiCz5vYX6a9YuVv4W/exec';
 
     async function loadFinanceData() {
-        try {
-            const resp = await fetch(SCRIPT_URL + '?action=keuangan');
-            const data = await resp.json();
+    try {
+        const resp = await fetch(SCRIPT_URL + '?action=keuangan');
+        const data = await resp.json();
 
-            // Bulan ini (April 2026) - bisa dibuat dinamis nanti
-            const bulanIniIndex = 3; // April (0=Jan)
-            document.getElementById('pemasukanBulanIni').textContent = 'Rp ' + formatNumber(data.pemasukanBulanan[bulanIniIndex] || 0);
-            document.getElementById('pengeluaranBulanIni').textContent = 'Rp ' + formatNumber(data.pengeluaranBulanan[bulanIniIndex] || 0);
-            const profitBulanIni = (data.pemasukanBulanan[bulanIniIndex] || 0) - (data.pengeluaranBulanan[bulanIniIndex] || 0);
-            document.getElementById('profitBulanIni').textContent = (profitBulanIni >= 0 ? 'Rp ' : '-Rp ') + formatNumber(Math.abs(profitBulanIni));
+        // Update summary
+        document.getElementById('totalPemasukan').textContent = 'Rp ' + formatNumber(data.totalPemasukan);
+        document.getElementById('totalPengeluaran').textContent = 'Rp ' + formatNumber(data.totalPengeluaran);
+        const profit = data.totalPemasukan - data.totalPengeluaran;
+        document.getElementById('totalProfit').textContent = (profit >= 0 ? 'Rp ' : '-Rp ') + formatNumber(Math.abs(profit));
 
-            // Chart tahunan
-            const ctx = document.getElementById('trendChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.bulanLabels,
-                    datasets: [
-                        { label: 'Pemasukan', data: data.pemasukanBulanan, borderColor: '#2ed573', backgroundColor: 'rgba(46,213,115,0.1)', tension: 0.3, fill: true },
-                        { label: 'Pengeluaran', data: data.pengeluaranBulanan, borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,0.1)', tension: 0.3, fill: true }
-                    ]
-                },
-                options: { responsive: true, plugins: { legend: { labels: { color: 'white' } } }, scales: { x: { ticks: { color: '#aaa' } }, y: { ticks: { color: '#aaa', callback: v => 'Rp' + v.toLocaleString('id') } } } }
-            });
+        // Update chart
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.bulanLabels,
+                datasets: [
+                    {
+                        label: 'Pemasukan',
+                        data: data.pemasukanBulanan,
+                        borderColor: '#2ed573',
+                        backgroundColor: 'rgba(46,213,115,0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Pengeluaran',
+                        data: data.pengeluaranBulanan,
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255,107,107,0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { labels: { color: 'white' } } },
+                scales: {
+                    x: { ticks: { color: '#aaa' } },
+                    y: { ticks: { color: '#aaa', callback: v => 'Rp' + v.toLocaleString('id') } }
+                }
+            }
+        });
 
-            // Tabel pengeluaran terbaru (dari Transaksi)
-            await loadRecentExpenses();
+        // Update tabel detail pengeluaran
+        const tbody = document.getElementById('expenseBody');
+        if (data.pengeluaranDetail && data.pengeluaranDetail.length > 0) {
+            tbody.innerHTML = data.pengeluaranDetail.map(item => `
+                <tr><td>${item.kategori}</td><td class="text-right" style="color:#ff6b6b;">Rp ${formatNumber(item.total)}</td></tr>
+            `).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="2" class="loading">Belum ada data pengeluaran</td></tr>';
+        }
 
-        } catch(e) { console.error(e); }
+    } catch(e) {
+        console.error(e);
+        document.getElementById('expenseBody').innerHTML = '<tr><td colspan="2" class="loading">❌ Gagal memuat data</td></tr>';
     }
+}
 
     async function loadRecentExpenses() {
         try {
