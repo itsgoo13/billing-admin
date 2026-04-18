@@ -75,13 +75,11 @@
             const resp = await fetch(SCRIPT_URL + '?action=keuangan');
             const data = await resp.json();
 
-            // Update summary
             document.getElementById('totalPemasukan').textContent = 'Rp ' + formatNumber(data.totalPemasukan);
             document.getElementById('totalPengeluaran').textContent = 'Rp ' + formatNumber(data.totalPengeluaran);
             const profit = data.totalPemasukan - data.totalPengeluaran;
             document.getElementById('totalProfit').textContent = (profit >= 0 ? 'Rp ' : '-Rp ') + formatNumber(Math.abs(profit));
 
-            // Chart
             const ctx = document.getElementById('trendChart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
@@ -116,7 +114,6 @@
                 }
             });
 
-            // Expense detail table
             const tbody = document.getElementById('expenseBody');
             tbody.innerHTML = data.pengeluaranDetail.map(item => `
                 <tr><td>${item.kategori}</td><td class="text-right" style="color:#ff6b6b;">Rp ${formatNumber(item.total)}</td></tr>
