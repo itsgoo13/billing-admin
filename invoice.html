@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R31NET - Invoice Generator</title>
+    <link rel="icon" type="image/png" href="logo-r31net.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 100%); min-height: 100vh; color: white; padding: 30px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .back-btn { color: white; background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 12px; text-decoration: none; display: inline-block; margin-bottom: 30px; }
+        h1 { color: #00d4ff; margin-bottom: 30px; }
+        .form-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; color: #aaa; margin-bottom: 8px; }
+        input, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-size: 1rem; }
+        .btn-primary { padding: 16px 32px; background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1.1rem; }
+        .invoice-preview { margin-top: 40px; background: white; color: #1a1a2e; padding: 40px; border-radius: 20px; }
+        .toast { position: fixed; bottom: 30px; right: 30px; padding: 18px 30px; background: #1a1a2e; border-radius: 20px; display: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="dashboard.html" class="back-btn">← Kembali ke Dashboard</a>
+    <h1>📄 Invoice Generator</h1>
+
+    <div class="form-card">
+        <div class="form-group">
+            <label>Pelanggan</label>
+            <select id="customerSelect">
+                <option value="">-- Pilih Pelanggan --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Nama</label>
+            <input type="text" id="nama" placeholder="Nama pelanggan">
+        </div>
+        <div class="form-group">
+            <label>IP Address</label>
+            <input type="text" id="ip" placeholder="30.30.30.xxx">
+        </div>
+        <div class="form-group">
+            <label>Paket</label>
+            <input type="text" id="paket" placeholder="10M/10M">
+        </div>
+        <div class="form-group">
+            <label>Harga (Rp)</label>
+            <input type="number" id="harga" placeholder="200000">
+        </div>
+        <div class="form-group">
+            <label>Diskon (Rp)</label>
+            <input type="number" id="diskon" placeholder="0" value="0">
+        </div>
+        <button class="btn-primary" onclick="generateAndDownload()">⬇️ Generate & Download PDF</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUPdb_0y7zZHmva1eUriHijFaBwLlFoU8Ye-OU8kYAHsA7NkdQiCz5vYX6a9YuVv4W/exec';
+
+    async function loadCustomers() {
+        try {
+            const resp = await fetch(SCRIPT_URL);
+            const data = await resp.json();
+            const select = document.getElementById('customerSelect');
+            data.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify({ nama: c.nama, ip: c.ip, paket: c.paket, harga: c.harga, diskon: c.diskon });
+                opt.textContent = `${c.nama} (${c.ip})`;
+                select.appendChild(opt);
+            });
+
+            select.addEventListener('change', function() {
+                if (this.value) {
+                    const d = JSON.parse(this.value);
+                    document.getElementById('nama').value = d.nama;
+                    document.getElementById('ip').value = d.ip;
+                    document.getElementById('paket').value = d.paket;
+                    document.getElementById('harga').value = d.harga;
+                    document.getElementById('diskon').value = d.diskon || 0;
+                }
+            });
+        } catch(e) { console.error(e); }
+    }
+
+    async function generateAndDownload() {
+        const nama = document.getElementById('nama').value;
+        const ip = document.getElementById('ip').value;
+        const paket = document.getElementById('paket').value;
+        const harga = document.getElementById('harga').value;
+        const diskon = document.getElementById('diskon').value || 0;
+
+        if (!nama || !ip || !paket || !harga) {
+            showToast('Semua field harus diisi', 'error');
+            return;
+        }
+
+        showToast('Membuat invoice...', 'success');
+        try {
+            const resp = await fetch(`${SCRIPT_URL}?action=invoice&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
+            const res = await resp.json();
+            if (res.success) {
+                window.open(res.url, '_blank');
+                showToast('Invoice siap!', 'success');
+            } else {
+                showToast('Gagal: ' + res.message, 'error');
+            }
+        } catch(e) { showToast('Error koneksi', 'error'); }
+    }
+
+    function showToast(msg, type) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        toast.className = 'toast ' + type;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    loadCustomers();
+</script>
+</body>
+</html>
