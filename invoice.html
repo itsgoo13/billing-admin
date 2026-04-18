@@ -1,167 +1,183 @@
-function generateInvoice(nama, ip, paket, harga, diskon, instalasi = 0, sewaAlat = 0, tanggal = null, telepon = '', keterangan = '') {
-  const hargaNum = parseInt(harga) || 0;
-  const diskonNum = parseInt(diskon) || 0;
-  const instalasiNum = parseInt(instalasi) || 0;
-  const sewaNum = parseInt(sewaAlat) || 0;
-
-  const subtotal = hargaNum + instalasiNum + sewaNum;
-  const total = subtotal - diskonNum;
-
-  const invoiceNumber = 'INV-' + Utilities.formatDate(new Date(), "GMT+7", "yyyyMMdd") + '-' + Math.floor(Math.random() * 1000);
-  const tglInvoice = tanggal ? new Date(tanggal) : new Date();
-  const tglStr = Utilities.formatDate(tglInvoice, "GMT+7", "dd/MM/yyyy");
-
-  // Informasi kontak default jika telepon kosong
-  const noTelp = telepon || '0878-8986-3799';
-
-  const html = `
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<style>
-  body {
-    font-family: 'Courier New', Courier, monospace;
-    padding: 30px;
-    max-width: 380px;
-    margin: 0 auto;
-    background: #fff;
-    color: #000;
-  }
-  .header {
-    text-align: center;
-    border-bottom: 1px dashed #000;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-  }
-  .title {
-    font-size: 22px;
-    font-weight: bold;
-    letter-spacing: 2px;
-  }
-  .subtitle {
-    font-size: 13px;
-    margin: 5px 0;
-  }
-  .info {
-    font-size: 14px;
-    margin-bottom: 15px;
-  }
-  .divider {
-    border-top: 1px dashed #000;
-    margin: 12px 0;
-  }
-  table {
-    width: 100%;
-    font-size: 14px;
-    border-collapse: collapse;
-  }
-  td {
-    padding: 4px 0;
-  }
-  .total {
-    font-size: 18px;
-    font-weight: bold;
-    text-align: right;
-    border-top: 1px solid #000;
-    padding-top: 8px;
-    margin-top: 8px;
-  }
-  .payment {
-    margin-top: 25px;
-    font-size: 13px;
-    border-top: 1px dashed #000;
-    padding-top: 12px;
-  }
-  .footer {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 13px;
-    color: #555;
-  }
-  .note {
-    font-style: italic;
-    margin: 15px 0;
-    font-size: 13px;
-  }
-  .qr-placeholder {
-    width: 100px;
-    height: 100px;
-    background: #f0f0f0;
-    border: 1px solid #ccc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px 0;
-    font-size: 12px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R31NET - Invoice Generator</title>
+    <link rel="icon" type="image/png" href="logo-r31net.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 100%); min-height: 100vh; color: white; padding: 30px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .back-btn { color: white; background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 12px; text-decoration: none; display: inline-block; margin-bottom: 30px; }
+        h1 { color: #00d4ff; margin-bottom: 30px; }
+        .form-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 30px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group.full-width { grid-column: span 2; }
+        label { display: block; color: #aaa; margin-bottom: 8px; }
+        input, select, textarea { width: 100%; padding: 14px; background: #1a1a2e !important; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white !important; font-size: 1rem; }
+        select option { background: #1a1a2e; }
+        textarea { min-height: 70px; resize: vertical; }
+        .btn-primary { padding: 16px 32px; background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1.1rem; cursor: pointer; width: 100%; }
+        .toast { position: fixed; bottom: 30px; right: 30px; padding: 18px 30px; background: #1a1a2e; border-left: 5px solid #00d4ff; border-radius: 16px; display: none; z-index: 2000; }
+        .toast.success { border-left-color: #2ed573; }
+        .toast.error { border-left-color: #ff6b6b; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .form-group.full-width { grid-column: span 1; } }
+    </style>
 </head>
 <body>
-<div class="header">
-  <div class="title">R31NET</div>
-  <div class="subtitle">Internet Service Provider</div>
-  <div class="subtitle">Jl. Otista Gg. H Maung, Kedaung - Pamulang</div>
-  <div class="subtitle">☎ ${noTelp}</div>
+<div class="container">
+    <a href="dashboard.html" class="back-btn">← Kembali ke Dashboard</a>
+    <h1>📄 Invoice Generator</h1>
+
+    <div class="form-card">
+        <div class="form-row">
+            <div class="form-group">
+                <label>👤 Pelanggan</label>
+                <select id="customerSelect">
+                    <option value="">-- Pilih Pelanggan --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📛 Nama</label>
+                <input type="text" id="nama" placeholder="Nama pelanggan">
+            </div>
+            <div class="form-group">
+                <label>🌐 IP Address</label>
+                <input type="text" id="ip" placeholder="30.30.30.xxx">
+            </div>
+            <div class="form-group">
+                <label>📦 Paket</label>
+                <input type="text" id="paket" placeholder="10M/10M">
+            </div>
+            <div class="form-group">
+                <label>💵 Harga Paket (Rp)</label>
+                <input type="number" id="harga" placeholder="200000">
+            </div>
+            <div class="form-group">
+                <label>🏷️ Diskon (Rp)</label>
+                <input type="number" id="diskon" placeholder="0" value="0">
+            </div>
+            <div class="form-group">
+                <label>🔧 Biaya Instalasi (Rp)</label>
+                <input type="number" id="instalasi" placeholder="0" value="0">
+            </div>
+            <div class="form-group">
+                <label>📡 Sewa Alat (Rp)</label>
+                <input type="number" id="sewaAlat" placeholder="0" value="0">
+            </div>
+            <div class="form-group">
+                <label>📅 Tanggal Invoice</label>
+                <input type="date" id="tanggalInvoice">
+            </div>
+            <div class="form-group">
+                <label>📞 No. Telepon</label>
+                <input type="text" id="telepon" placeholder="0878-xxxx-xxxx">
+            </div>
+            <div class="form-group full-width">
+                <label>📝 Keterangan / Catatan</label>
+                <textarea id="keterangan" placeholder="Contoh: Pembayaran bulan Mei 2026, termasuk biaya instalasi..."></textarea>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="generateAndDownload()">
+            ⬇️ Generate & Download PDF
+        </button>
+    </div>
 </div>
 
-<div class="info">
-  <strong>No. Invoice:</strong> ${invoiceNumber}<br>
-  <strong>Tanggal:</strong> ${tglStr}<br>
-  <strong>Pelanggan:</strong> ${nama}<br>
-  <strong>IP Address:</strong> ${ip}
+<div class="toast" id="toast">
+    <span id="toastIcon">✅</span>
+    <span id="toastMsg"></span>
 </div>
 
-<div class="divider"></div>
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUPdb_0y7zZHmva1eUriHijFaBwLlFoU8Ye-OU8kYAHsA7NkdQiCz5vYX6a9YuVv4W/exec';
 
-<table>
-  <tr><td>Paket ${paket}</td><td align="right">Rp ${hargaNum.toLocaleString('id')}</td></tr>
-  ${instalasiNum > 0 ? `<tr><td>Biaya Instalasi</td><td align="right">Rp ${instalasiNum.toLocaleString('id')}</td></tr>` : ''}
-  ${sewaNum > 0 ? `<tr><td>Sewa Alat</td><td align="right">Rp ${sewaNum.toLocaleString('id')}</td></tr>` : ''}
-  ${diskonNum > 0 ? `<tr><td>Diskon</td><td align="right">- Rp ${diskonNum.toLocaleString('id')}</td></tr>` : ''}
-</table>
+    document.getElementById('tanggalInvoice').value = new Date().toISOString().split('T')[0];
 
-<div class="divider"></div>
+    async function loadCustomers() {
+        try {
+            const resp = await fetch(SCRIPT_URL);
+            const data = await resp.json();
+            const select = document.getElementById('customerSelect');
+            data.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify({ nama: c.nama, ip: c.ip, paket: c.paket, harga: c.harga, diskon: c.diskon || 0 });
+                opt.textContent = `${c.nama} (${c.ip})`;
+                select.appendChild(opt);
+            });
 
-<div class="total">
-  TOTAL: Rp ${total.toLocaleString('id')}
-</div>
+            select.addEventListener('change', function() {
+                if (this.value) {
+                    const d = JSON.parse(this.value);
+                    document.getElementById('nama').value = d.nama || '';
+                    document.getElementById('ip').value = d.ip || '';
+                    document.getElementById('paket').value = d.paket || '';
+                    document.getElementById('harga').value = d.harga || '';
+                    document.getElementById('diskon').value = d.diskon || 0;
+                }
+            });
 
-${keterangan ? `<div class="note">📝 ${keterangan}</div>` : ''}
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('nama')) {
+                document.getElementById('nama').value = urlParams.get('nama');
+                document.getElementById('ip').value = urlParams.get('ip') || '';
+                document.getElementById('paket').value = urlParams.get('paket') || '';
+                document.getElementById('harga').value = urlParams.get('harga') || '';
+                document.getElementById('diskon').value = urlParams.get('diskon') || 0;
+            }
+        } catch(e) { console.error(e); }
+    }
 
-<div class="payment">
-  <strong>Metode Pembayaran:</strong><br>
-  • Transfer Bank BCA: 7310685440 a.n VIA DESIANA<br>
-  • DANA / OVO: 087898863799<br>
-  • Scan QRIS (terlampir di bawah)
-</div>
+    async function generateAndDownload() {
+        const nama = document.getElementById('nama').value.trim();
+        const ip = document.getElementById('ip').value.trim();
+        const paket = document.getElementById('paket').value.trim();
+        const harga = document.getElementById('harga').value;
+        const diskon = document.getElementById('diskon').value || 0;
+        const instalasi = document.getElementById('instalasi').value || 0;
+        const sewaAlat = document.getElementById('sewaAlat').value || 0;
+        const tanggal = document.getElementById('tanggalInvoice').value;
+        const telepon = document.getElementById('telepon').value.trim();
+        const keterangan = document.getElementById('keterangan').value.trim();
 
-<!-- QR Code sederhana (bisa diganti gambar asli) -->
-<div style="text-align: center; margin-top: 20px;">
-  <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=BCA%207310685440%20a.n%20VIA%20DESIANA" alt="QR Code" width="100" height="100">
-  <div style="font-size: 12px; margin-top: 5px;">Scan untuk pembayaran</div>
-</div>
+        if (!nama || !ip || !paket || !harga) {
+            showToast('Nama, IP, Paket, dan Harga wajib diisi', 'error');
+            return;
+        }
 
-<div class="footer">
-  --- Terima kasih atas kepercayaan Anda ---
-</div>
+        showToast('⏳ Membuat invoice...', 'success');
+        try {
+            const params = new URLSearchParams({
+                action: 'invoice',
+                nama, ip, paket, harga, diskon,
+                instalasi, sewaAlat, tanggal, telepon, keterangan
+            });
+            const resp = await fetch(`${SCRIPT_URL}?${params.toString()}`);
+            const res = await resp.json();
+            if (res.success) {
+                showToast('✅ Invoice siap!', 'success');
+                window.open(res.url, '_blank');
+            } else {
+                showToast('❌ Gagal: ' + (res.message || 'Unknown error'), 'error');
+            }
+        } catch(e) { showToast('❌ Error koneksi', 'error'); }
+    }
+
+    function showToast(msg, type) {
+        const toast = document.getElementById('toast');
+        const icon = document.getElementById('toastIcon');
+        const msgEl = document.getElementById('toastMsg');
+        icon.textContent = type === 'success' ? '✅' : '❌';
+        msgEl.textContent = msg;
+        toast.className = 'toast ' + type;
+        toast.style.display = 'flex';
+        setTimeout(() => toast.style.display = 'none', 4000);
+    }
+
+    loadCustomers();
+</script>
 </body>
 </html>
-  `;
-
-  const blob = Utilities.newBlob(html, 'text/html');
-  const pdf = blob.getAs('application/pdf').setName('Invoice_' + nama + '.pdf');
-
-  let fileUrl = '';
-  try {
-    // Ganti 'YOUR_FOLDER_ID' dengan ID folder Drive (opsional)
-    const folder = DriveApp.getFolderById('YOUR_FOLDER_ID');
-    const file = folder.createFile(pdf);
-    fileUrl = file.getUrl();
-  } catch (e) {
-    const tempFile = DriveApp.createFile(pdf);
-    fileUrl = tempFile.getUrl();
-  }
-
-  return { success: true, url: fileUrl };
-}
