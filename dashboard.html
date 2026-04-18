@@ -59,89 +59,18 @@
         .btn-suspend:hover { background: rgba(255, 165, 2, 0.25); }
         .btn-edit { background: rgba(0, 212, 255, 0.15); color: #00d4ff; border: 1px solid rgba(0, 212, 255, 0.3); }
         .btn-edit:hover { background: rgba(0, 212, 255, 0.25); }
-        .btn-invoice { background: rgba(155, 89, 182, 0.15); color: #9b59b6; border: 1px solid rgba(155, 89, 182, 0.3); }
-        .btn-invoice:hover { background: rgba(155, 89, 182, 0.25); }
         .btn-hapus { background: rgba(255, 71, 87, 0.15); color: #ff6b6b; border: 1px solid rgba(255, 71, 87, 0.3); }
         .btn-hapus:hover { background: rgba(255, 71, 87, 0.25); }
-        .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border: 1px solid rgba(0, 212, 255, 0.2);
-    border-radius: 30px;
-    padding: 40px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-}
-
-.modal h2 {
-    color: #00d4ff;
-    margin-bottom: 30px;
-    font-size: 1.8rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.modal .form-group {
-    margin-bottom: 25px;
-}
-
-.modal label {
-    display: block;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-
-.modal input, .modal select {
-    width: 100%;
-    padding: 16px;
-    background: #1a1a2e !important;           /* ⬅️ latar gelap */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    color: white !important;                   /* ⬅️ teks putih */
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.3s;
-}
-
-.modal input:focus, .modal select:focus {
-    border-color: #00d4ff;
-    background: rgba(0, 212, 255, 0.05);
-}
-
-.modal-actions {
-    display: flex;
-    gap: 15px;
-    margin-top: 30px;
-}
-
-.modal-actions button {
-    flex: 1;
-    padding: 16px;
-    border-radius: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.error-text {
-    color: #ff6b6b;
-    font-size: 0.85rem;
-    margin-top: 8px;
-    min-height: 20px;
-}
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 30px; padding: 40px; width: 90%; max-width: 500px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5); }
+        .modal h2 { color: #00d4ff; margin-bottom: 30px; font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
+        .modal .form-group { margin-bottom: 25px; }
+        .modal label { display: block; color: rgba(255, 255, 255, 0.7); margin-bottom: 10px; font-weight: 500; }
+        .modal input, .modal select { width: 100%; padding: 16px; background: #1a1a2e; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; font-size: 1rem; outline: none; transition: all 0.3s; }
+        .modal input:focus, .modal select:focus { border-color: #00d4ff; background: rgba(0, 212, 255, 0.05); }
+        .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
+        .modal-actions button { flex: 1; padding: 16px; border-radius: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .error-text { color: #ff6b6b; font-size: 0.85rem; margin-top: 8px; min-height: 20px; }
         .toast { position: fixed; bottom: 30px; right: 30px; padding: 18px 30px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 20px; color: white; font-weight: 500; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); display: none; align-items: center; gap: 15px; z-index: 2000; animation: slideIn 0.3s ease; }
         .toast.success { border-color: #2ed573; }
         .toast.error { border-color: #ff6b6b; }
@@ -192,7 +121,6 @@
         <ul class="sidebar-menu">
             <li class="active">📊 Dashboard</li>
             <li onclick="window.location.href='keuangan.html'">💰 Keuangan</li>
-            <li onclick="window.location.href='invoice.html'">📄 Invoice</li>
             <li onclick="window.open('https://docs.google.com/spreadsheets/d/1azTZfcpjA1Rbddreuk8xXS7wn9CEqisufX9Vu5humkc/edit?gid=458324953#gid=458324953', '_blank')">📋 Google Sheet</li>
             <li onclick="window.open('https://t.me/+6xWRIbuLR7ViM2Q1', '_blank')">📱 Telegram</li>
         </ul>
@@ -229,17 +157,16 @@
     const isLoggedIn = localStorage.getItem('r31net_logged_in') === 'true' || sessionStorage.getItem('r31net_logged_in') === 'true';
     if (!isLoggedIn) window.location.href = 'index.html';
 
-    function logout() {
+    function logout(){
         localStorage.removeItem('r31net_logged_in'); localStorage.removeItem('r31net_username');
         sessionStorage.removeItem('r31net_logged_in'); sessionStorage.removeItem('r31net_username');
         window.location.href = 'index.html';
     }
 
-    // Fungsi invoice di luar DOMContentLoaded
-    function openInvoicePage(nama, ip, paket, harga, diskon) {
-        const url = `invoice.html?nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon || 0}`;
-        window.open(url, '_blank');
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('usernameDisplay').textContent = localStorage.getItem('r31net_username') || sessionStorage.getItem('r31net_username') || 'Admin';
+        loadData();
+    });
 
     function openAddModal() {
         document.getElementById('addUserModal').style.display = 'flex';
@@ -252,8 +179,29 @@
         const hargaMap = { '2M/2M': 100000, '3M/3M': 150000, '5M/10M': 200000, '8M/8M': 200000, '10M/10M': 200000, '20M/20M': 250000 };
         document.getElementById('newPaket').onchange = function() { document.getElementById('newHarga').value = hargaMap[this.value] || ''; };
     }
-
     function closeAddModal() { document.getElementById('addUserModal').style.display = 'none'; }
+
+    document.getElementById('newIP').addEventListener('blur', function() {
+        document.getElementById('ipError').textContent = usedIPs.has(this.value.trim()) ? '❌ IP sudah digunakan!' : '';
+    });
+
+    document.getElementById('addUserForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const nama = document.getElementById('newNama').value.trim();
+        const ip = document.getElementById('newIP').value.trim();
+        const paket = document.getElementById('newPaket').value;
+        const harga = document.getElementById('newHarga').value;
+        const diskon = document.getElementById('newDiskon').value || '0';
+        if (usedIPs.has(ip)) return showToast('❌ IP sudah digunakan!', 'error');
+        if (!nama || !ip || !paket || !harga) return showToast('❌ Semua field harus diisi!', 'error');
+        showToast('⏳ Menambahkan pelanggan...', 'success');
+        try {
+            const resp = await fetch(`${SCRIPT_URL}?action=add&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
+            const res = await resp.json();
+            if (res.success) { showToast('✅ Pelanggan berhasil ditambahkan!', 'success'); closeAddModal(); loadData(); syncMikrotik(); }
+            else showToast('❌ Gagal: ' + res.message, 'error');
+        } catch { showToast('❌ Error koneksi!', 'error'); }
+    });
 
     function openEditModal(nama, ip, paket, harga, diskon = 0) {
         document.getElementById('editUserModal').style.display = 'flex';
@@ -265,8 +213,24 @@
         document.getElementById('editDiskon').value = diskon;
         document.getElementById('editIpError').textContent = '';
     }
-
     function closeEditModal() { document.getElementById('editUserModal').style.display = 'none'; }
+
+    document.getElementById('editUserForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const namaLama = document.getElementById('editNamaLama').value;
+        const nama = document.getElementById('editNama').value.trim();
+        const ip = document.getElementById('editIP').value.trim();
+        const paket = document.getElementById('editPaket').value;
+        const harga = document.getElementById('editHarga').value;
+        const diskon = document.getElementById('editDiskon').value || '0';
+        showToast('⏳ Menyimpan perubahan...', 'success');
+        try {
+            const resp = await fetch(`${SCRIPT_URL}?action=edit&namaLama=${encodeURIComponent(namaLama)}&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
+            const res = await resp.json();
+            if (res.success) { showToast('✅ Perubahan disimpan!', 'success'); closeEditModal(); loadData(); syncMikrotik(); }
+            else showToast('❌ Gagal: ' + res.message, 'error');
+        } catch { showToast('❌ Error koneksi!', 'error'); }
+    });
 
     async function loadData() {
         try {
@@ -291,7 +255,6 @@
             <td><div class="action-buttons">
                 ${p.status === 'Aktif' ? `<button class="btn-action btn-suspend" onclick="suspendUser('${p.nama}')">⏸ Suspend</button>` : `<button class="btn-action btn-bayar" onclick="aktifkanUser('${p.nama}')">💰 Bayar</button>`}
                 <button class="btn-action btn-edit" onclick="openEditModal('${p.nama}', '${p.ip}', '${p.paket || ''}', '${p.harga || ''}', '${p.diskon || 0}')">✏️</button>
-                <button class="btn-action btn-invoice" onclick="openInvoicePage('${p.nama}', '${p.ip}', '${p.paket || ''}', ${p.harga || 0}, ${p.diskon || 0})">📄</button>
                 <button class="btn-action btn-hapus" onclick="hapusUser('${p.nama}')">🗑️</button>
             </div></td>
         </tr>`).join('');
@@ -310,6 +273,7 @@
         renderTable(filtered);
         updateStats(filtered);
     }
+    document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key==='Enter') filterTable(); });
 
     async function aktifkanUser(nama) {
         showToast('⏳ Memproses pembayaran...', 'success');
@@ -319,7 +283,6 @@
             if(j.success) { showToast(`✅ ${nama} telah diaktifkan!`, 'success'); loadData(); syncMikrotik(); }
         } catch { showToast('❌ Gagal memproses!', 'error'); }
     }
-
     async function suspendUser(nama) {
         if(!confirm(`Suspend ${nama}?`)) return;
         showToast('⏳ Memproses...', 'success');
@@ -329,7 +292,6 @@
             if(j.success) { showToast(`⚠️ ${nama} telah disuspend!`, 'error'); loadData(); syncMikrotik(); }
         } catch { showToast('❌ Gagal memproses!', 'error'); }
     }
-
     async function hapusUser(nama) {
         if(!confirm(`HAPUS permanen ${nama}?`)) return;
         showToast('⏳ Menghapus...', 'success');
@@ -339,12 +301,10 @@
             if(j.success) { showToast(`🗑️ ${nama} telah dihapus!`, 'success'); loadData(); syncMikrotik(); }
         } catch { showToast('❌ Gagal menghapus!', 'error'); }
     }
-
     async function syncMikrotik() {
         showToast('⏳ Sync MikroTik...', 'success');
         try { await fetch(`${SCRIPT_URL}?action=sync`); showToast('✅ Sync MikroTik berhasil!', 'success'); } catch { showToast('❌ Sync gagal!', 'error'); }
     }
-
     async function updateGithub() {
         showToast('⏳ Push ke GitHub...', 'success');
         try { await fetch(`${SCRIPT_URL}?action=push`); showToast('✅ GitHub updated!', 'success'); } catch { showToast('❌ Push gagal!', 'error'); }
@@ -358,53 +318,6 @@
         t.style.display = 'flex';
         setTimeout(() => t.style.display = 'none', 3000);
     }
-
-    // Event listeners dan inisialisasi
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('usernameDisplay').textContent = localStorage.getItem('r31net_username') || sessionStorage.getItem('r31net_username') || 'Admin';
-        loadData();
-    });
-
-    document.getElementById('newIP').addEventListener('blur', function() {
-        document.getElementById('ipError').textContent = usedIPs.has(this.value.trim()) ? '❌ IP sudah digunakan!' : '';
-    });
-
-    document.getElementById('addUserForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const nama = document.getElementById('newNama').value.trim();
-        const ip = document.getElementById('newIP').value.trim();
-        const paket = document.getElementById('newPaket').value;
-        const harga = document.getElementById('newHarga').value;
-        const diskon = document.getElementById('newDiskon').value || '0';
-        if (usedIPs.has(ip)) return showToast('❌ IP sudah digunakan!', 'error');
-        if (!nama || !ip || !paket || !harga) return showToast('❌ Semua field harus diisi!', 'error');
-        showToast('⏳ Menambahkan pelanggan...', 'success');
-        try {
-            const resp = await fetch(`${SCRIPT_URL}?action=add&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
-            const res = await resp.json();
-            if (res.success) { showToast('✅ Pelanggan berhasil ditambahkan!', 'success'); closeAddModal(); loadData(); syncMikrotik(); }
-            else showToast('❌ Gagal: ' + res.message, 'error');
-        } catch { showToast('❌ Error koneksi!', 'error'); }
-    });
-
-    document.getElementById('editUserForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const namaLama = document.getElementById('editNamaLama').value;
-        const nama = document.getElementById('editNama').value.trim();
-        const ip = document.getElementById('editIP').value.trim();
-        const paket = document.getElementById('editPaket').value;
-        const harga = document.getElementById('editHarga').value;
-        const diskon = document.getElementById('editDiskon').value || '0';
-        showToast('⏳ Menyimpan perubahan...', 'success');
-        try {
-            const resp = await fetch(`${SCRIPT_URL}?action=edit&namaLama=${encodeURIComponent(namaLama)}&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
-            const res = await resp.json();
-            if (res.success) { showToast('✅ Perubahan disimpan!', 'success'); closeEditModal(); loadData(); syncMikrotik(); }
-            else showToast('❌ Gagal: ' + res.message, 'error');
-        } catch { showToast('❌ Error koneksi!', 'error'); }
-    });
-
-    document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key==='Enter') filterTable(); });
 </script>
 </body>
 </html>
