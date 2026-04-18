@@ -9,10 +9,11 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Inter', sans-serif; }
         body { background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 100%); min-height: 100vh; color: white; padding: 30px; }
-        .container { max-width: 1400px; margin: 0 auto; }
+        .container { max-width: 1600px; margin: 0 auto; }
         .header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
         .header a { color: #00d4ff; text-decoration: none; padding: 10px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; }
         h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #fff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { margin: 30px 0 20px; color: #00d4ff; }
         .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 40px; }
         .card { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 30px; }
         .card.pemasukan .value { color: #2ed573; }
@@ -21,13 +22,24 @@
         .card-label { color: #aaa; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         .card-value { font-size: 3rem; font-weight: 700; }
         .chart-container { background: rgba(255,255,255,0.02); border-radius: 24px; padding: 30px; margin-bottom: 40px; border: 1px solid rgba(255,255,255,0.05); }
-        .table-container { background: rgba(255,255,255,0.02); border-radius: 24px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .table-container { background: rgba(255,255,255,0.02); border-radius: 24px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 30px; }
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 15px; color: #00d4ff; border-bottom: 1px solid rgba(0,212,255,0.2); }
         td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .text-right { text-align: right; }
         .loading { text-align: center; padding: 40px; color: #aaa; }
         .back-btn { display: inline-block; margin-bottom: 20px; color: white; background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 12px; text-decoration: none; }
+
+        /* Form Pengeluaran */
+        .expense-form { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 30px; margin-bottom: 40px; border: 1px solid rgba(255,255,255,0.05); }
+        .form-row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
+        .form-group { flex: 1; min-width: 150px; }
+        .form-group label { display: block; color: #aaa; margin-bottom: 8px; font-size: 0.9rem; }
+        .form-group input, .form-group select { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-size: 1rem; }
+        .btn-primary { padding: 14px 28px; background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .toast { position: fixed; bottom: 30px; right: 30px; padding: 18px 30px; background: #1a1a2e; border-radius: 20px; display: none; z-index: 2000; }
+        .toast.success { border-left: 5px solid #2ed573; }
+        .toast.error { border-left: 5px solid #ff6b6b; }
     </style>
 </head>
 <body>
@@ -38,34 +50,74 @@
         <span style="color:#aaa;">Tahun 2026</span>
     </div>
 
+    <!-- Ringkasan Bulan Berjalan -->
+    <h2>📆 Bulan Ini (April 2026)</h2>
     <div class="summary-cards">
         <div class="card pemasukan">
-            <div class="card-label">📥 Total Pemasukan</div>
-            <div class="card-value" id="totalPemasukan">Rp0</div>
+            <div class="card-label">📥 Pemasukan</div>
+            <div class="card-value" id="pemasukanBulanIni">Rp0</div>
         </div>
         <div class="card pengeluaran">
-            <div class="card-label">📤 Total Pengeluaran</div>
-            <div class="card-value" id="totalPengeluaran">Rp0</div>
+            <div class="card-label">📤 Pengeluaran</div>
+            <div class="card-value" id="pengeluaranBulanIni">Rp0</div>
         </div>
         <div class="card profit">
-            <div class="card-label">📊 Profit/Loss</div>
-            <div class="card-value" id="totalProfit">Rp0</div>
+            <div class="card-label">📊 Profit</div>
+            <div class="card-value" id="profitBulanIni">Rp0</div>
         </div>
     </div>
 
-    <div class="chart-container">
-        <h3 style="margin-bottom:20px;">📈 Trend Bulanan 2026</h3>
-        <canvas id="trendChart" style="max-height:400px;"></canvas>
+    <!-- Form Tambah Pengeluaran -->
+    <div class="expense-form">
+        <h3 style="margin-bottom:20px;">➕ Catat Pengeluaran Baru</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Tanggal</label>
+                <input type="date" id="expenseDate">
+            </div>
+            <div class="form-group">
+                <label>Kategori</label>
+                <select id="expenseCategory">
+                    <option value="Bayar ISP Upstream">Bayar ISP</option>
+                    <option value="Bayar Teknisi">Teknisi</option>
+                    <option value="Beli Alat">Beli Alat</option>
+                    <option value="Perbaikan">Perbaikan</option>
+                    <option value="Mama">Mama</option>
+                    <option value="Sedekah">Sedekah</option>
+                    <option value="Lain-lain">Lain-lain</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Deskripsi</label>
+                <input type="text" id="expenseDesc" placeholder="Keterangan">
+            </div>
+            <div class="form-group">
+                <label>Jumlah (Rp)</label>
+                <input type="number" id="expenseAmount" placeholder="0">
+            </div>
+            <div class="form-group">
+                <button class="btn-primary" onclick="addExpense()">💾 Simpan</button>
+            </div>
+        </div>
     </div>
 
+    <!-- Tabel Pengeluaran Terbaru -->
+    <h2>🧾 Riwayat Pengeluaran Terbaru</h2>
     <div class="table-container">
-        <h3 style="margin-bottom:20px;">🧾 Rincian Pengeluaran Rutin</h3>
-        <table id="expenseTable">
-            <thead><tr><th>Kategori</th><th class="text-right">Total (Rp)</th></tr></thead>
-            <tbody id="expenseBody"><tr><td colspan="2" class="loading">Memuat data...</td></tr></tbody>
+        <table>
+            <thead><tr><th>Tanggal</th><th>Kategori</th><th>Deskripsi</th><th class="text-right">Jumlah</th></tr></thead>
+            <tbody id="expenseTableBody"><tr><td colspan="4" class="loading">Memuat data...</td></tr></tbody>
         </table>
     </div>
+
+    <!-- Trend Tahunan -->
+    <h2>📈 Trend Tahunan 2026</h2>
+    <div class="chart-container">
+        <canvas id="trendChart" style="max-height:400px;"></canvas>
+    </div>
 </div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUPdb_0y7zZHmva1eUriHijFaBwLlFoU8Ye-OU8kYAHsA7NkdQiCz5vYX6a9YuVv4W/exec';
@@ -75,60 +127,86 @@
             const resp = await fetch(SCRIPT_URL + '?action=keuangan');
             const data = await resp.json();
 
-            document.getElementById('totalPemasukan').textContent = 'Rp ' + formatNumber(data.totalPemasukan);
-            document.getElementById('totalPengeluaran').textContent = 'Rp ' + formatNumber(data.totalPengeluaran);
-            const profit = data.totalPemasukan - data.totalPengeluaran;
-            document.getElementById('totalProfit').textContent = (profit >= 0 ? 'Rp ' : '-Rp ') + formatNumber(Math.abs(profit));
+            // Bulan ini (April 2026) - bisa dibuat dinamis nanti
+            const bulanIniIndex = 3; // April (0=Jan)
+            document.getElementById('pemasukanBulanIni').textContent = 'Rp ' + formatNumber(data.pemasukanBulanan[bulanIniIndex] || 0);
+            document.getElementById('pengeluaranBulanIni').textContent = 'Rp ' + formatNumber(data.pengeluaranBulanan[bulanIniIndex] || 0);
+            const profitBulanIni = (data.pemasukanBulanan[bulanIniIndex] || 0) - (data.pengeluaranBulanan[bulanIniIndex] || 0);
+            document.getElementById('profitBulanIni').textContent = (profitBulanIni >= 0 ? 'Rp ' : '-Rp ') + formatNumber(Math.abs(profitBulanIni));
 
+            // Chart tahunan
             const ctx = document.getElementById('trendChart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: data.bulanLabels,
                     datasets: [
-                        {
-                            label: 'Pemasukan',
-                            data: data.pemasukanBulanan,
-                            borderColor: '#2ed573',
-                            backgroundColor: 'rgba(46,213,115,0.1)',
-                            tension: 0.3,
-                            fill: true
-                        },
-                        {
-                            label: 'Pengeluaran',
-                            data: data.pengeluaranBulanan,
-                            borderColor: '#ff6b6b',
-                            backgroundColor: 'rgba(255,107,107,0.1)',
-                            tension: 0.3,
-                            fill: true
-                        }
+                        { label: 'Pemasukan', data: data.pemasukanBulanan, borderColor: '#2ed573', backgroundColor: 'rgba(46,213,115,0.1)', tension: 0.3, fill: true },
+                        { label: 'Pengeluaran', data: data.pengeluaranBulanan, borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,0.1)', tension: 0.3, fill: true }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { labels: { color: 'white' } } },
-                    scales: {
-                        x: { ticks: { color: '#aaa' } },
-                        y: { ticks: { color: '#aaa', callback: v => 'Rp' + v.toLocaleString('id') } }
-                    }
-                }
+                options: { responsive: true, plugins: { legend: { labels: { color: 'white' } } }, scales: { x: { ticks: { color: '#aaa' } }, y: { ticks: { color: '#aaa', callback: v => 'Rp' + v.toLocaleString('id') } } } }
             });
 
-            const tbody = document.getElementById('expenseBody');
-            tbody.innerHTML = data.pengeluaranDetail.map(item => `
-                <tr><td>${item.kategori}</td><td class="text-right" style="color:#ff6b6b;">Rp ${formatNumber(item.total)}</td></tr>
+            // Tabel pengeluaran terbaru (dari Transaksi)
+            await loadRecentExpenses();
+
+        } catch(e) { console.error(e); }
+    }
+
+    async function loadRecentExpenses() {
+        try {
+            const resp = await fetch(SCRIPT_URL + '?action=recent_expenses');
+            const data = await resp.json();
+            const tbody = document.getElementById('expenseTableBody');
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="loading">Belum ada pengeluaran</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.map(item => `
+                <tr><td>${item.tanggal}</td><td>${item.kategori}</td><td>${item.deskripsi || '-'}</td><td class="text-right" style="color:#ff6b6b;">Rp ${formatNumber(item.jumlah)}</td></tr>
             `).join('');
+        } catch(e) { tbody.innerHTML = '<tr><td colspan="4" class="loading">Gagal memuat</td></tr>'; }
+    }
 
-        } catch(e) {
-            console.error(e);
-            document.getElementById('expenseBody').innerHTML = '<tr><td colspan="2" class="loading">❌ Gagal memuat data</td></tr>';
+    async function addExpense() {
+        const date = document.getElementById('expenseDate').value;
+        const category = document.getElementById('expenseCategory').value;
+        const desc = document.getElementById('expenseDesc').value;
+        const amount = document.getElementById('expenseAmount').value;
+
+        if (!date || !category || !amount) {
+            showToast('Tanggal, kategori, dan jumlah wajib diisi', 'error');
+            return;
         }
+
+        showToast('Menyimpan...', 'success');
+        try {
+            const resp = await fetch(`${SCRIPT_URL}?action=add_expense&tanggal=${date}&kategori=${encodeURIComponent(category)}&deskripsi=${encodeURIComponent(desc)}&jumlah=${amount}`);
+            const res = await resp.json();
+            if (res.success) {
+                showToast('Pengeluaran berhasil dicatat', 'success');
+                document.getElementById('expenseDate').value = '';
+                document.getElementById('expenseDesc').value = '';
+                document.getElementById('expenseAmount').value = '';
+                loadFinanceData(); // refresh
+            } else {
+                showToast('Gagal: ' + res.message, 'error');
+            }
+        } catch(e) { showToast('Error koneksi', 'error'); }
     }
 
-    function formatNumber(n) {
-        return n.toLocaleString('id');
+    function formatNumber(n) { return n.toLocaleString('id'); }
+    function showToast(msg, type) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        toast.className = 'toast ' + type;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
     }
 
+    // Set default date to today
+    document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
     loadFinanceData();
 </script>
 </body>
