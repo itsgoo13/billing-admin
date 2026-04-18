@@ -165,10 +165,11 @@
         window.location.href = 'index.html';
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('usernameDisplay').textContent = localStorage.getItem('r31net_username') || sessionStorage.getItem('r31net_username') || 'Admin';
-        loadData();
-    });
+    // Fungsi invoice di luar DOMContentLoaded
+    function openInvoicePage(nama, ip, paket, harga, diskon) {
+        const url = `invoice.html?nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon || 0}`;
+        window.open(url, '_blank');
+    }
 
     function openAddModal() {
         document.getElementById('addUserModal').style.display = 'flex';
@@ -181,29 +182,8 @@
         const hargaMap = { '2M/2M': 100000, '3M/3M': 150000, '5M/10M': 200000, '8M/8M': 200000, '10M/10M': 200000, '20M/20M': 250000 };
         document.getElementById('newPaket').onchange = function() { document.getElementById('newHarga').value = hargaMap[this.value] || ''; };
     }
+
     function closeAddModal() { document.getElementById('addUserModal').style.display = 'none'; }
-
-    document.getElementById('newIP').addEventListener('blur', function() {
-        document.getElementById('ipError').textContent = usedIPs.has(this.value.trim()) ? '❌ IP sudah digunakan!' : '';
-    });
-
-    document.getElementById('addUserForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const nama = document.getElementById('newNama').value.trim();
-        const ip = document.getElementById('newIP').value.trim();
-        const paket = document.getElementById('newPaket').value;
-        const harga = document.getElementById('newHarga').value;
-        const diskon = document.getElementById('newDiskon').value || '0';
-        if (usedIPs.has(ip)) return showToast('❌ IP sudah digunakan!', 'error');
-        if (!nama || !ip || !paket || !harga) return showToast('❌ Semua field harus diisi!', 'error');
-        showToast('⏳ Menambahkan pelanggan...', 'success');
-        try {
-            const resp = await fetch(`${SCRIPT_URL}?action=add&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
-            const res = await resp.json();
-            if (res.success) { showToast('✅ Pelanggan berhasil ditambahkan!', 'success'); closeAddModal(); loadData(); syncMikrotik(); }
-            else showToast('❌ Gagal: ' + res.message, 'error');
-        } catch { showToast('❌ Error koneksi!', 'error'); }
-    });
 
     function openEditModal(nama, ip, paket, harga, diskon = 0) {
         document.getElementById('editUserModal').style.display = 'flex';
@@ -215,24 +195,8 @@
         document.getElementById('editDiskon').value = diskon;
         document.getElementById('editIpError').textContent = '';
     }
-    function closeEditModal() { document.getElementById('editUserModal').style.display = 'none'; }
 
-    document.getElementById('editUserForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const namaLama = document.getElementById('editNamaLama').value;
-        const nama = document.getElementById('editNama').value.trim();
-        const ip = document.getElementById('editIP').value.trim();
-        const paket = document.getElementById('editPaket').value;
-        const harga = document.getElementById('editHarga').value;
-        const diskon = document.getElementById('editDiskon').value || '0';
-        showToast('⏳ Menyimpan perubahan...', 'success');
-        try {
-            const resp = await fetch(`${SCRIPT_URL}?action=edit&namaLama=${encodeURIComponent(namaLama)}&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
-            const res = await resp.json();
-            if (res.success) { showToast('✅ Perubahan disimpan!', 'success'); closeEditModal(); loadData(); syncMikrotik(); }
-            else showToast('❌ Gagal: ' + res.message, 'error');
-        } catch { showToast('❌ Error koneksi!', 'error'); }
-    });
+    function closeEditModal() { document.getElementById('editUserModal').style.display = 'none'; }
 
     async function loadData() {
         try {
@@ -257,7 +221,7 @@
             <td><div class="action-buttons">
                 ${p.status === 'Aktif' ? `<button class="btn-action btn-suspend" onclick="suspendUser('${p.nama}')">⏸ Suspend</button>` : `<button class="btn-action btn-bayar" onclick="aktifkanUser('${p.nama}')">💰 Bayar</button>`}
                 <button class="btn-action btn-edit" onclick="openEditModal('${p.nama}', '${p.ip}', '${p.paket || ''}', '${p.harga || ''}', '${p.diskon || 0}')">✏️</button>
-                <button class="btn-action btn-invoice" onclick="generateInvoice('${p.nama}', '${p.ip}', '${p.paket || ''}', ${p.harga || 0}, ${p.diskon || 0})">📄</button>
+                <button class="btn-action btn-invoice" onclick="openInvoicePage('${p.nama}', '${p.ip}', '${p.paket || ''}', ${p.harga || 0}, ${p.diskon || 0})">📄</button>
                 <button class="btn-action btn-hapus" onclick="hapusUser('${p.nama}')">🗑️</button>
             </div></td>
         </tr>`).join('');
@@ -276,7 +240,6 @@
         renderTable(filtered);
         updateStats(filtered);
     }
-    document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key==='Enter') filterTable(); });
 
     async function aktifkanUser(nama) {
         showToast('⏳ Memproses pembayaran...', 'success');
@@ -286,6 +249,7 @@
             if(j.success) { showToast(`✅ ${nama} telah diaktifkan!`, 'success'); loadData(); syncMikrotik(); }
         } catch { showToast('❌ Gagal memproses!', 'error'); }
     }
+
     async function suspendUser(nama) {
         if(!confirm(`Suspend ${nama}?`)) return;
         showToast('⏳ Memproses...', 'success');
@@ -295,6 +259,7 @@
             if(j.success) { showToast(`⚠️ ${nama} telah disuspend!`, 'error'); loadData(); syncMikrotik(); }
         } catch { showToast('❌ Gagal memproses!', 'error'); }
     }
+
     async function hapusUser(nama) {
         if(!confirm(`HAPUS permanen ${nama}?`)) return;
         showToast('⏳ Menghapus...', 'success');
@@ -304,25 +269,12 @@
             if(j.success) { showToast(`🗑️ ${nama} telah dihapus!`, 'success'); loadData(); syncMikrotik(); }
         } catch { showToast('❌ Gagal menghapus!', 'error'); }
     }
-    async function generateInvoice(nama, ip, paket, harga, diskon) {
-        showToast('📄 Membuat invoice...', 'success');
-        try {
-            const resp = await fetch(`${SCRIPT_URL}?action=invoice&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
-            const res = await resp.json();
-            if (res.success) {
-                showToast('✅ Invoice siap!', 'success');
-                window.open(res.url, '_blank');
-            } else {
-                showToast('❌ Gagal: ' + res.message, 'error');
-            }
-        } catch (e) {
-            showToast('❌ Error koneksi', 'error');
-        }
-    }
+
     async function syncMikrotik() {
         showToast('⏳ Sync MikroTik...', 'success');
         try { await fetch(`${SCRIPT_URL}?action=sync`); showToast('✅ Sync MikroTik berhasil!', 'success'); } catch { showToast('❌ Sync gagal!', 'error'); }
     }
+
     async function updateGithub() {
         showToast('⏳ Push ke GitHub...', 'success');
         try { await fetch(`${SCRIPT_URL}?action=push`); showToast('✅ GitHub updated!', 'success'); } catch { showToast('❌ Push gagal!', 'error'); }
@@ -336,6 +288,53 @@
         t.style.display = 'flex';
         setTimeout(() => t.style.display = 'none', 3000);
     }
+
+    // Event listeners dan inisialisasi
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('usernameDisplay').textContent = localStorage.getItem('r31net_username') || sessionStorage.getItem('r31net_username') || 'Admin';
+        loadData();
+    });
+
+    document.getElementById('newIP').addEventListener('blur', function() {
+        document.getElementById('ipError').textContent = usedIPs.has(this.value.trim()) ? '❌ IP sudah digunakan!' : '';
+    });
+
+    document.getElementById('addUserForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const nama = document.getElementById('newNama').value.trim();
+        const ip = document.getElementById('newIP').value.trim();
+        const paket = document.getElementById('newPaket').value;
+        const harga = document.getElementById('newHarga').value;
+        const diskon = document.getElementById('newDiskon').value || '0';
+        if (usedIPs.has(ip)) return showToast('❌ IP sudah digunakan!', 'error');
+        if (!nama || !ip || !paket || !harga) return showToast('❌ Semua field harus diisi!', 'error');
+        showToast('⏳ Menambahkan pelanggan...', 'success');
+        try {
+            const resp = await fetch(`${SCRIPT_URL}?action=add&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
+            const res = await resp.json();
+            if (res.success) { showToast('✅ Pelanggan berhasil ditambahkan!', 'success'); closeAddModal(); loadData(); syncMikrotik(); }
+            else showToast('❌ Gagal: ' + res.message, 'error');
+        } catch { showToast('❌ Error koneksi!', 'error'); }
+    });
+
+    document.getElementById('editUserForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const namaLama = document.getElementById('editNamaLama').value;
+        const nama = document.getElementById('editNama').value.trim();
+        const ip = document.getElementById('editIP').value.trim();
+        const paket = document.getElementById('editPaket').value;
+        const harga = document.getElementById('editHarga').value;
+        const diskon = document.getElementById('editDiskon').value || '0';
+        showToast('⏳ Menyimpan perubahan...', 'success');
+        try {
+            const resp = await fetch(`${SCRIPT_URL}?action=edit&namaLama=${encodeURIComponent(namaLama)}&nama=${encodeURIComponent(nama)}&ip=${encodeURIComponent(ip)}&paket=${encodeURIComponent(paket)}&harga=${harga}&diskon=${diskon}`);
+            const res = await resp.json();
+            if (res.success) { showToast('✅ Perubahan disimpan!', 'success'); closeEditModal(); loadData(); syncMikrotik(); }
+            else showToast('❌ Gagal: ' + res.message, 'error');
+        } catch { showToast('❌ Error koneksi!', 'error'); }
+    });
+
+    document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key==='Enter') filterTable(); });
 </script>
 </body>
 </html>
